@@ -10,6 +10,13 @@ namespace CodeBase.Game.Map
         private void Start()
         {
             _board.Initialize(_boardSize);
+            _board.FindPathToCenter();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Space))
+                _board.FindPathToRandomPoint();
         }
     }
 }
