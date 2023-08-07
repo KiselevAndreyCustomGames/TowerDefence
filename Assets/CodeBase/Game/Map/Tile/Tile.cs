@@ -6,10 +6,25 @@ namespace CodeBase.Game.Map
     {
         [SerializeField] private Transform _arrow;
 
-        public bool IsAlternative { get; set; }
-        public bool HasPath => PathFinder.HasPath;
+        private TileContent _content;
 
         public ITilePathFinder PathFinder { get; private set; }
+        public bool IsAlternative { get; set; }
+
+        public bool HasPath => PathFinder.HasPath;
+
+        public TileContent Content
+        {
+            get => _content;
+            set
+            {
+                if(_content != null)
+                    _content.Despawn();
+
+                _content = value;
+                _content.transform.localPosition = transform.localPosition;
+            }
+        }
 
         #region ITileSearch
         public void ClearPath() => PathFinder.ClearPath();
@@ -21,18 +36,19 @@ namespace CodeBase.Game.Map
         public ITile GrowPathWest() => PathFinder.GrowPathWest();
         #endregion ITileSearch
 
-        #region ITile
+        #region ISearchableTile
         public void MakeWestNeibour(ITile west)
         {
             PathFinder.MakeWestNeibour(west);
             west.PathFinder.MakeEastNeibour(this);
         }
+
         public void MakeSouthNeibour(ITile south)
         {
             PathFinder.MakeSouthNeibour(south);
             south.PathFinder.MakeNorthNeibour(this);
         }
-        #endregion ITile
+        #endregion ISearchableTile
 
         private void Awake()
         {

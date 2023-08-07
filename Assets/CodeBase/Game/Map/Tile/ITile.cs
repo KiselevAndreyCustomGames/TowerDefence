@@ -2,8 +2,7 @@ namespace CodeBase.Game.Map
 {
     public interface ITile : IInternalTile, ISearchableTile
     {
-        public void MakeWestNeibour(ITile west);
-        public void MakeSouthNeibour(ITile south);
+        public TileContent Content { get; set; }
     }
 
     public interface IInternalTile
@@ -25,6 +24,9 @@ namespace CodeBase.Game.Map
 
     public interface ISearchableTile : ITileSearch
     {
+        public void MakeWestNeibour(ITile west);
+        public void MakeSouthNeibour(ITile south);
+
         public bool IsAlternative { get; set; }
     }
 }
