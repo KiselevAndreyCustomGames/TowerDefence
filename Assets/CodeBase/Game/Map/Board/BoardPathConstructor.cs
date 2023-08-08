@@ -5,17 +5,15 @@ using static Lean.Pool.LeanPool;
 
 namespace CodeBase.Game.Map
 {
-    public class BoardPathConstructor
+    public class BoardPathConstructor : IBoardConstructor
     {
         private readonly Vector2Int _size;
         private readonly ITile[] _tiles;
         private readonly Queue<ITile> _serchFrontier = new();
-        private readonly TileContentFactorySO _tileContentFactory;
 
         public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, TileContentFactorySO tileContentFactory)
         {
             _size = size;
-            _tileContentFactory = tileContentFactory;
 
             _tiles = new ITile[size.x * size.y];
 
@@ -38,7 +36,7 @@ namespace CodeBase.Game.Map
                     if ((y & 1) == 0)
                         tile.IsAlternative = !tile.IsAlternative;
 
-                    tile.Content = _tileContentFactory.Spawn(TileType.Empty);
+                    tile.Content = tileContentFactory.Spawn(TileType.Empty);
                 }
             }
         }
@@ -96,25 +94,13 @@ namespace CodeBase.Game.Map
             }
 
             foreach (var tile in _tiles)
+                if(tile.HasPath == false)
+                    return false;
+
+            foreach (var tile in _tiles)
                 tile.ShowPath();
 
             return true;
-        }
-
-        public void ToggleDestination(ITile tile)
-        {
-            var currentContentType = tile.Content.Type;
-
-            if (currentContentType == TileType.Destination)
-            {
-                tile.Content = _tileContentFactory.Spawn(TileType.Empty);
-                if (FindPaths() == false)
-                    tile.Content = _tileContentFactory.Spawn(currentContentType);
-            }
-            else if (currentContentType == TileType.Empty)
-                tile.Content = _tileContentFactory.Spawn(TileType.Destination);
-
-            FindPaths();
         }
     }
 }

@@ -26,14 +26,23 @@ namespace CodeBase.Game.Map
         private void Update()
         {
             if (Input.GetMouseButtonUp(1))
-                HandleTouch();
+                ToogleDestination();
+            else if(Input.GetMouseButtonUp(0))
+                ToggleWall();
         }
 
-        private void HandleTouch()
+        private void ToogleDestination()
         {
             var tile = _board.GetTile(TouchRay);
             if (tile != null)
                 _board.ToggleDestination(tile);
+        }
+
+        private void ToggleWall()
+        {
+            var tile = _board.GetTile(TouchRay);
+            if (tile != null)
+                _board.ToggleWall(tile);
         }
     }
 }

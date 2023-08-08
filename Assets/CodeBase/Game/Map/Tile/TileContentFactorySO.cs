@@ -7,6 +7,7 @@ namespace CodeBase.Game.Map
     {
         [SerializeField] private TileContent _empty;
         [SerializeField] private TileContent _destination;
+        [SerializeField] private TileContent _wall;
 
         public void Despawn(TileContent content)
         {
@@ -19,7 +20,7 @@ namespace CodeBase.Game.Map
             {
                 TileType.Empty => SpawnInPool(_empty),
                 TileType.Destination => SpawnInPool(_destination),
-                TileType.Wall => null,
+                TileType.Wall => SpawnInPool(_wall),
                 _ => null,
             };
         }

@@ -75,7 +75,7 @@ namespace CodeBase.Game.Map
 
             neibour.PathFinder.IncreaseDistance();
             neibour.PathFinder.SetNextOnPath(_tile);
-            return neibour;
+            return neibour.Content.Type == TileType.Wall ? null : neibour;
         }
     }
 }

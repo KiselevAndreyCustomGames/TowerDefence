@@ -11,17 +11,21 @@ namespace CodeBase.Game.Map
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private TileContentFactorySO _tileContentFactory;
 
-        private BoardPathConstructor _constructor;
+        private IBoardConstructor _constructor;
+        private IBoardSwitcher _switcher;
 
         public void Initialize(Vector2Int size)
         {
             _ground.localScale = new(size.x, size.y, 1f);
-            _constructor = new(size, _tileParent, _tilePrefab, _tileContentFactory);
+            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _tileContentFactory);
+            _switcher = new BoardSwitcher(_tileContentFactory, FindPaths);
         }
 
         public bool FindPaths() => _constructor.FindPaths();
         public ITile GetTile(Ray ray) => _constructor.GetTile(ray);
-        public void ToggleDestination(ITile tile) => _constructor.ToggleDestination(tile);
+
+        public void ToggleDestination(ITile tile) => _switcher.ToggleDestination(tile);
+        public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
 
         public TileContent Spawn(TileType type) => _tileContentFactory.Spawn(type);
     }
