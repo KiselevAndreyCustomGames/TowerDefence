@@ -5,10 +5,8 @@ namespace CodeBase.Game.Map
     public class MapBehaviour : MonoBehaviour
     {
         [SerializeField] private Board _board;
-        [SerializeField] private Vector2Int _boardSize;
-
         [Space]
-        [SerializeField] private TileContentFactorySO _tileContentFactory;
+        [SerializeField] private Vector2Int _boardSize;
 
         private Camera _camera;
 
@@ -22,7 +20,7 @@ namespace CodeBase.Game.Map
         private void Start()
         {
             _board.Initialize(_boardSize);
-            _board.FindPathToCenter();
+            _board.FindPaths();
         }
 
         private void Update()
@@ -35,7 +33,7 @@ namespace CodeBase.Game.Map
         {
             var tile = _board.GetTile(TouchRay);
             if (tile != null)
-                tile.Content = _tileContentFactory.Spawn(TileType.Destination);
+                tile.Content = _board.Spawn(TileType.Destination);
         }
     }
 }

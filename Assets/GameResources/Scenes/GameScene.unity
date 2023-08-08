@@ -302,8 +302,8 @@ MonoBehaviour:
     _ground: {fileID: 1020600127}
     _tileParent: {fileID: 855757523}
     _tilePrefab: {fileID: 4775346636236575404, guid: 2bdb570ed5708aa4abf80ad56239a6b7, type: 3}
+    _tileContentFactory: {fileID: 11400000, guid: b673148970ab48c4f9be8188ac70bd87, type: 2}
   _boardSize: {x: 11, y: 11}
-  _tileContentFactory: {fileID: 11400000, guid: b673148970ab48c4f9be8188ac70bd87, type: 2}
 --- !u!4 &915940287
 Transform:
   m_ObjectHideFlags: 0
