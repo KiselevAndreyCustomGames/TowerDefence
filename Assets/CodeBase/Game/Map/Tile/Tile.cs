@@ -18,9 +18,6 @@ namespace CodeBase.Game.Map
             get => _content;
             set
             {
-                if(_content != null)
-                    _content.Despawn();
-
                 _content = value;
                 _content.transform.localPosition = transform.localPosition;
             }

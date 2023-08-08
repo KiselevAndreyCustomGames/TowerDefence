@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-using static Lean.Pool.LeanPool;
 
 namespace CodeBase.Game.Map
 {
@@ -11,7 +10,7 @@ namespace CodeBase.Game.Map
         private readonly ITile[] _tiles;
         private readonly Queue<ITile> _serchFrontier = new();
 
-        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, TileContentFactorySO tileContentFactory)
+        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, Action<ITile, TileType> changeContent)
         {
             _size = size;
 
@@ -22,7 +21,7 @@ namespace CodeBase.Game.Map
             {
                 for (int x = 0; x < size.x; x++, i++)
                 {
-                    var tile = Spawn(tilePrefab);
+                    var tile = Lean.Pool.LeanPool.Spawn(tilePrefab);
                     tile.transform.SetParent(tileParent, false);
                     tile.transform.localPosition = new Vector3(x - offset.x, 0f, y - offset.y);
                     _tiles[i] = tile;
@@ -36,7 +35,7 @@ namespace CodeBase.Game.Map
                     if ((y & 1) == 0)
                         tile.IsAlternative = !tile.IsAlternative;
 
-                    tile.Content = tileContentFactory.Spawn(TileType.Empty);
+                    changeContent(tile, TileType.Empty);
                 }
             }
         }

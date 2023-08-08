@@ -1,9 +1,10 @@
+using CodeBase.Game.Map;
 using UnityEngine;
 
-namespace CodeBase.Game.Map
+namespace CodeBase.Infrastructure.Game
 {
-    [CreateAssetMenu(menuName = nameof(CodeBase) + "/" + nameof(Game)  + "/" + nameof(Map) + "/" + nameof(TileContentFactorySO))]
-    public class TileContentFactorySO : ScriptableObject
+    [CreateAssetMenu(menuName = nameof(CodeBase) + "/" + nameof(Infrastructure)  + "/" + nameof(Game) + "/" + nameof(TileContentFactorySO))]
+    public class TileContentFactorySO : GameObjectFactorySO
     {
         [SerializeField] private TileContent _emptyPrefab;
         [SerializeField] private TileContent _destinationPrefab;
@@ -27,8 +28,7 @@ namespace CodeBase.Game.Map
 
         private TileContent SpawnInPool(TileContent prefab)
         {
-            var instance = Lean.Pool.LeanPool.Spawn(prefab);
-            instance.SetFactory(this);
+            var instance = SpawnGameObject(prefab);
             return instance;
         }
     }

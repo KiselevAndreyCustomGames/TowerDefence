@@ -5,15 +5,15 @@ namespace CodeBase.Game.Map
 {
     public class BoardSwitcher : IBoardSwitcher
     {
-        private readonly TileContentFactorySO _tileContentFactory;
         private readonly Func<bool> FindPaths;
+        private readonly Action<ITile, TileType> ChangeContent;
 
         private readonly List<ITile> _enemySpawnTiles = new();
 
-        public BoardSwitcher(TileContentFactorySO tileContentFactory, Func<bool> findPaths)
+        public BoardSwitcher(Func<bool> findPaths, Action<ITile, TileType> changeContent)
         {
-            _tileContentFactory = tileContentFactory;
             FindPaths = findPaths;
+            ChangeContent = changeContent;
         }
 
         public void ToggleDestination(ITile tile)
@@ -22,14 +22,14 @@ namespace CodeBase.Game.Map
 
             if (currentContentType == TileType.Destination)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Empty);
+                ChangeContent(tile, TileType.Empty);
                 if (FindPaths() == false)
-                    tile.Content = _tileContentFactory.Spawn(currentContentType);
+                    ChangeContent(tile, currentContentType);
                 FindPaths();
             }
             else if (currentContentType == TileType.Empty)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Destination);
+                ChangeContent(tile, TileType.Destination);
                 FindPaths();
             }
         }
@@ -38,14 +38,14 @@ namespace CodeBase.Game.Map
         {
             if (tile.Content.Type == TileType.Wall)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Empty);
+                ChangeContent(tile, TileType.Empty);
                 FindPaths();
             }
             else if (tile.Content.Type == TileType.Empty)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Wall);
+                ChangeContent(tile, TileType.Wall);
                 if (FindPaths() == false)
-                    tile.Content = _tileContentFactory.Spawn(TileType.Empty);
+                    ChangeContent(tile, TileType.Empty);
                 FindPaths();
             }
         }
@@ -55,12 +55,12 @@ namespace CodeBase.Game.Map
             if (tile.Content.Type == TileType.EnemySpawnPoint
                 && _enemySpawnTiles.Count > 1)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Empty);
+                ChangeContent(tile, TileType.Empty);
                 _enemySpawnTiles.Remove(tile);
             }
             else if (tile.Content.Type == TileType.Empty)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.EnemySpawnPoint);
+                ChangeContent(tile, TileType.EnemySpawnPoint);
                 _enemySpawnTiles.Add(tile);
             }
         }

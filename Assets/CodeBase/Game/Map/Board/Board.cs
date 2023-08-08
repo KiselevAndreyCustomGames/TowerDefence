@@ -1,3 +1,4 @@
+using CodeBase.Infrastructure.Game;
 using UnityEngine;
 
 
@@ -17,8 +18,8 @@ namespace CodeBase.Game.Map
         public void Initialize(Vector2Int size)
         {
             _ground.localScale = new(size.x, size.y, 1f);
-            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _tileContentFactory);
-            _switcher = new BoardSwitcher(_tileContentFactory, FindPaths);
+            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, ChangeContent);
+            _switcher = new BoardSwitcher(FindPaths, ChangeContent);
         }
 
         public bool FindPaths() => _constructor.FindPaths();
@@ -27,5 +28,17 @@ namespace CodeBase.Game.Map
         public void ToggleDestination(ITile tile) => _switcher.ToggleDestination(tile);
         public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
         public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
+
+        private void ChangeContent(ITile tile, TileType newType)
+        {
+            var content = _tileContentFactory.Spawn(newType);
+            if (tile.Content != content)
+            {
+                _tileContentFactory.Despawn(tile.Content);
+                tile.Content = content;
+            }
+            else
+                _tileContentFactory.Despawn(content);
+        }
     }
 }
