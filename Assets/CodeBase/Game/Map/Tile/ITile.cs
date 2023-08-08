@@ -1,8 +1,11 @@
+using UnityEngine;
+
 namespace CodeBase.Game.Map
 {
     public interface ITile : IInternalTile, ISearchableTile
     {
         public TileContent Content { get; set; }
+        public Transform Transform { get; }
     }
 
     public interface IInternalTile

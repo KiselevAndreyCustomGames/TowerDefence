@@ -1,4 +1,5 @@
 using CodeBase.Infrastructure.Game;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -14,6 +15,8 @@ namespace CodeBase.Game.Map
 
         private IBoardConstructor _constructor;
         private IBoardSwitcher _switcher;
+
+        public List<ITile> EnemySpawnTiles => _switcher.EnemySpawnTiles;
 
         public void Initialize(Vector2Int size)
         {

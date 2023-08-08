@@ -7,8 +7,9 @@ namespace CodeBase.Game.Map
     {
         private readonly Func<bool> FindPaths;
         private readonly Action<ITile, TileType> ChangeContent;
-
         private readonly List<ITile> _enemySpawnTiles = new();
+
+        public List<ITile> EnemySpawnTiles => _enemySpawnTiles;
 
         public BoardSwitcher(Func<bool> findPaths, Action<ITile, TileType> changeContent)
         {

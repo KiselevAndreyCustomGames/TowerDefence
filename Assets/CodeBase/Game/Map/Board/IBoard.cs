@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CodeBase.Game.Map
@@ -15,6 +16,7 @@ namespace CodeBase.Game.Map
 
     public interface IBoardSwitcher
     {
+        public List<ITile> EnemySpawnTiles { get; }
         public void ToggleDestination(ITile tile);
         public void ToggleWall(ITile tile);
         public void ToggleEnemySpawnPoint(ITile tile);

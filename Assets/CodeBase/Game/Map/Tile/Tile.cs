@@ -23,6 +23,8 @@ namespace CodeBase.Game.Map
             }
         }
 
+        public Transform Transform => transform;
+
         #region ITileSearch
         public void ClearPath() => PathFinder.ClearPath();
         public void BecameDestination() => PathFinder.BecameDestination();

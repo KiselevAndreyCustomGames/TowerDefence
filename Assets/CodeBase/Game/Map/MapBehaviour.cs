@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CodeBase.Game.Map
 {
-    public class MapBehaviour : MonoBehaviour
+    [System.Serializable]
+    public class MapBehaviour
     {
         [SerializeField] private Board _board;
         [Space]
@@ -12,18 +14,20 @@ namespace CodeBase.Game.Map
 
         private Ray TouchRay => _camera.ScreenPointToRay(Input.mousePosition);
 
-        private void Awake()
+        public List<ITile> EnemySpawnTiles => _board.EnemySpawnTiles;
+
+        public void OnAwake()
         {
             _camera = Camera.main;
         }
 
-        private void Start()
+        public void OnStart()
         {
             _board.Initialize(_boardSize);
             _board.FindPaths();
         }
 
-        private void Update()
+        public void OnUpdate()
         {
             if (Input.GetMouseButtonUp(0))
                 HandleTouch();
