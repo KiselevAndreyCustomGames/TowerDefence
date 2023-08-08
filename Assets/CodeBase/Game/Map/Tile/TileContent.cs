@@ -6,7 +6,8 @@ namespace CodeBase.Game.Map
     {
         Empty,
         Destination,
-        Wall
+        Wall,
+        EnemySpawnPoint
     }
 
     public class TileContent : MonoBehaviour

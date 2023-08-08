@@ -26,7 +26,6 @@ namespace CodeBase.Game.Map
 
         public void ToggleDestination(ITile tile) => _switcher.ToggleDestination(tile);
         public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
-
-        public TileContent Spawn(TileType type) => _tileContentFactory.Spawn(type);
+        public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
     }
 }

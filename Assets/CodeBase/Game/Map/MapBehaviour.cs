@@ -25,24 +25,34 @@ namespace CodeBase.Game.Map
 
         private void Update()
         {
-            if (Input.GetMouseButtonUp(1))
-                ToogleDestination();
-            else if(Input.GetMouseButtonUp(0))
-                ToggleWall();
+            if (Input.GetMouseButtonUp(0))
+                HandleTouch();
+            else if (Input.GetMouseButtonUp(1))
+                HandleAlternativeTouch();
         }
 
-        private void ToogleDestination()
+        private void HandleTouch()
         {
             var tile = _board.GetTile(TouchRay);
             if (tile != null)
-                _board.ToggleDestination(tile);
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                    Debug.Log(tile.Content.Type);
+                else
+                    _board.ToggleWall(tile);
+            }
         }
 
-        private void ToggleWall()
+        private void HandleAlternativeTouch()
         {
             var tile = _board.GetTile(TouchRay);
             if (tile != null)
-                _board.ToggleWall(tile);
+            {
+                if(Input.GetKey(KeyCode.LeftShift))
+                    _board.ToggleDestination(tile);
+                else
+                    _board.ToggleEnemySpawnPoint(tile);
+            }
         }
     }
 }
