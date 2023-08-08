@@ -107,7 +107,7 @@ namespace CodeBase.Game.Map
 
             if (currentContentType == TileType.Destination)
             {
-                tile.Content = _tileContentFactory.Spawn(TileType.Destination);
+                tile.Content = _tileContentFactory.Spawn(TileType.Empty);
                 if (FindPaths() == false)
                     tile.Content = _tileContentFactory.Spawn(currentContentType);
             }

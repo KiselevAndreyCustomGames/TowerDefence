@@ -21,6 +21,7 @@ namespace CodeBase.Game.Map
 
         public bool FindPaths() => _constructor.FindPaths();
         public ITile GetTile(Ray ray) => _constructor.GetTile(ray);
+        public void ToggleDestination(ITile tile) => _constructor.ToggleDestination(tile);
 
         public TileContent Spawn(TileType type) => _tileContentFactory.Spawn(type);
     }

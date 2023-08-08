@@ -33,7 +33,7 @@ namespace CodeBase.Game.Map
         {
             var tile = _board.GetTile(TouchRay);
             if (tile != null)
-                tile.Content = _board.Spawn(TileType.Destination);
+                _board.ToggleDestination(tile);
         }
     }
 }
