@@ -1,7 +1,8 @@
+using CodeBase.Game.Map;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CodeBase.Game.Map
+namespace CodeBase.Game
 {
     [System.Serializable]
     public class MapBehaviour

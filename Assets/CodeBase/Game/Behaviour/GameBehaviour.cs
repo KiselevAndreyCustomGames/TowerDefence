@@ -1,4 +1,3 @@
-using CodeBase.Game.Map;
 using UnityEngine;
 
 namespace CodeBase.Game

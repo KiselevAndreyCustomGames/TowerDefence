@@ -9,6 +9,8 @@ namespace CodeBase.Game
     [System.Serializable]
     public class EnemySpawnBehaviour
     {
+        private readonly EnemyCollection _collection = new();
+
         [SerializeField] private EnemyFactorySO _enemyFactory;
         [SerializeField, Range(0.1f, 5f)] private float _enemySpawnSpeed;
 
@@ -29,6 +31,8 @@ namespace CodeBase.Game
                 _spawnProgress -= 1f;
                 SpawnEnemy();
             }
+
+            _collection.GameUpdate();
         }
 
         private void SpawnEnemy()
@@ -39,6 +43,7 @@ namespace CodeBase.Game
             var spawnTile = _spawnTiles.Random();
             var enemy = _enemyFactory.Spawn();
             enemy.SpawnOn(spawnTile);
+            _collection.Add(enemy);
         }
     }
 }
