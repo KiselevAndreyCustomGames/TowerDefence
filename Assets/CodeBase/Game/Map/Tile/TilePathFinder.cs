@@ -15,6 +15,9 @@ namespace CodeBase.Game.Map
 
         private int _distance;
 
+        public ITile NextTileOnPath => _nextOnPath;
+        public bool HasPath => _distance != int.MaxValue;
+
 
         public TilePathFinder(ITile tile, Transform arrow)
         {
@@ -23,8 +26,6 @@ namespace CodeBase.Game.Map
         }
 
         #region ITileSearch
-        public bool HasPath => _distance != int.MaxValue;
-
         public void ShowPath()
         {
             if (_distance == 0)

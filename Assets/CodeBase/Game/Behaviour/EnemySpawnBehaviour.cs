@@ -1,3 +1,4 @@
+using CodeBase.Game.Character.Enemy;
 using CodeBase.Game.Map;
 using CodeBase.Infrastructure.Game;
 using CodeBase.Utility.Extension;
@@ -42,8 +43,13 @@ namespace CodeBase.Game
 
             var spawnTile = _spawnTiles.Random();
             var enemy = _enemyFactory.Spawn();
-            enemy.SpawnOn(spawnTile);
+            enemy.Init(spawnTile, OnEnemyEndedPath);
             _collection.Add(enemy);
+        }
+
+        private void OnEnemyEndedPath(EnemyBehaviour enemy)
+        {
+            _enemyFactory.Despawn(enemy);
         }
     }
 }

@@ -11,6 +11,7 @@ namespace CodeBase.Game.Map
         public ITilePathFinder PathFinder { get; private set; }
         public bool IsAlternative { get; set; }
 
+        public ITile NextTileOnPath => PathFinder.NextTileOnPath;
         public bool HasPath => PathFinder.HasPath;
 
         public TileContent Content

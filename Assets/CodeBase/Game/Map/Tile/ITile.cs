@@ -16,6 +16,7 @@ namespace CodeBase.Game.Map
     public interface ITileSearch
     {
         public bool HasPath { get; }
+        public ITile NextTileOnPath { get; }
         public void ShowPath();
         public void ClearPath();
         public void BecameDestination();
