@@ -11,6 +11,16 @@ namespace CodeBase.Game.Map
         public ITilePathFinder PathFinder { get; private set; }
         public bool IsAlternative { get; set; }
 
+        public Vector3 ExitPoint
+        {
+            get => PathFinder.ExitPoint;
+            set => PathFinder.ExitPoint = value;
+        }
+        public Direction PathDirection 
+        { 
+            get => PathFinder.PathDirection; 
+            set => PathFinder.PathDirection = value; 
+        }
         public ITile NextTileOnPath => PathFinder.NextTileOnPath;
         public bool HasPath => PathFinder.HasPath;
 

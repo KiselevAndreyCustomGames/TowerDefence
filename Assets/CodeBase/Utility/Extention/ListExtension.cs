@@ -9,11 +9,12 @@ namespace CodeBase.Utility.Extension
 
         public static T Random<T>(this IList<T> list) => list[_random.Next(list.Count)];
 
-        /// <summary>  Give any index without IndexOutRange  </summary>
         public static T Ind<T>(this List<T> list, int index)
         {
-            index = Math.Abs(index);
-            return list[index % list.Count];
+            index %= list.Count;
+            if (index < 0)
+                index = list.Count + index;
+            return list[index];
         }
 
         public static void Shuffle<T>(this IList<T> list)
@@ -27,17 +28,21 @@ namespace CodeBase.Utility.Extension
             }
         }
 
-        public static string ContentToString<T>(this List<T> list, string separator = "\n")
+        public static IList<T> Shuffled<T>(this IList<T> list)
         {
-            string str = "";
-            for (int i = 0; i < list.Count - 1; i++)
-            {
-                str += list[i].ToString() + separator;
-            }
-
-            str+=list[^1].ToString();
-
-            return str;
+            var result = new List<T>(list);
+            result.Shuffle();
+            return result;
         }
+
+        public static string ToString<T>(this IList<T> list, string separator) =>
+            string.Join(separator, list);
+
+        public static bool IsEmpty<T>(this IList<T> list) {  return list.Count == 0; }
+        public static bool IsNotEmpty<T>(this IList<T> list) { return list.Count > 0; }
+        public static bool IsNullOrEmpty<T>(this IList<T> list) { return list == null || list.Count == 0; }
+
+        public static int LastIndex<T>(this IList<T> list) { return list.Count - 1; }
+        public static T Last<T>(this IList<T> list) { return list[list.LastIndex()]; }
     }
 }

@@ -17,6 +17,8 @@ namespace CodeBase.Game.Map
     {
         public bool HasPath { get; }
         public ITile NextTileOnPath { get; }
+        public Vector3 ExitPoint { get; set;  }
+        public Direction PathDirection { get; set; }
         public void ShowPath();
         public void ClearPath();
         public void BecameDestination();

@@ -1,3 +1,4 @@
+using CodeBase.Utility.Extension;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,13 +8,14 @@ namespace CodeBase.Game.Map
     public class BoardPathConstructor : IBoardConstructor
     {
         private readonly Vector2Int _size;
+        private readonly Func<bool> UseAlternative;
         private readonly ITile[] _tiles;
         private readonly Queue<ITile> _serchFrontier = new();
 
-        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, Action<ITile, TileType> changeContent)
+        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, Action<ITile, TileType> changeContent, Func<bool> useAlternative)
         {
             _size = size;
-
+            UseAlternative = useAlternative;
             _tiles = new ITile[size.x * size.y];
 
             var offset = new Vector2((size.x - 1) * 0.5f, (size.y - 1) * 0.5f);
@@ -38,6 +40,8 @@ namespace CodeBase.Game.Map
                     changeContent(tile, TileType.Empty);
                 }
             }
+
+            changeContent(_tiles[(int)(_tiles.Length * 0.5f)], TileType.Destination);
         }
 
         public ITile GetTile(Ray ray)
@@ -75,7 +79,7 @@ namespace CodeBase.Game.Map
                 var tile = _serchFrontier.Dequeue();
                 if (tile != null)
                 {
-                    if (tile.IsAlternative)
+                    if (tile.IsAlternative && UseAlternative())
                     {
                         _serchFrontier.Enqueue(tile.GrowPathNorth());
                         _serchFrontier.Enqueue(tile.GrowPathSouth());

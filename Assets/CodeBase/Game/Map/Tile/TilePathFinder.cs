@@ -15,9 +15,10 @@ namespace CodeBase.Game.Map
 
         private int _distance;
 
+        public Vector3 ExitPoint { get; set; }
+        public Direction PathDirection { get; set; }
         public ITile NextTileOnPath => _nextOnPath;
         public bool HasPath => _distance != int.MaxValue;
-
 
         public TilePathFinder(ITile tile, Transform arrow)
         {
@@ -52,12 +53,13 @@ namespace CodeBase.Game.Map
         {
             _distance = 0;
             _nextOnPath = null;
+            ExitPoint = _tile.Transform.localPosition;
         }
 
-        public ITile GrowPathNorth() => GrowPathTo(_north);
-        public ITile GrowPathEast() => GrowPathTo(_east);
-        public ITile GrowPathSouth() => GrowPathTo(_south);
-        public ITile GrowPathWest() => GrowPathTo(_west);
+        public ITile GrowPathNorth() => GrowPathTo(_north, Direction.South);
+        public ITile GrowPathEast() => GrowPathTo(_east, Direction.West);
+        public ITile GrowPathSouth() => GrowPathTo(_south, Direction.North);
+        public ITile GrowPathWest() => GrowPathTo(_west, Direction.East);
         #endregion ITileSearch
 
         #region ITilePathFinder
@@ -69,13 +71,15 @@ namespace CodeBase.Game.Map
         public void MakeWestNeibour(ITile tile) => _west = tile;
         #endregion ITilePathFinder
 
-        private ITile GrowPathTo(ITile neibour)
+        private ITile GrowPathTo(ITile neibour, Direction direction)
         {
             if (HasPath == false || neibour == null || neibour.HasPath)
                 return null;
 
             neibour.PathFinder.IncreaseDistance();
             neibour.PathFinder.SetNextOnPath(_tile);
+            neibour.ExitPoint = (neibour.Transform.localPosition + _tile.Transform.localPosition) * 0.5f;
+            neibour.PathDirection = direction;
             return neibour.Content.Type == TileType.Wall ? null : neibour;
         }
     }

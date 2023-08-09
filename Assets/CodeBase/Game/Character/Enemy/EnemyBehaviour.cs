@@ -6,13 +6,14 @@ namespace CodeBase.Game.Character.Enemy
 {
     public class EnemyBehaviour : MonoBehaviour, IEnemy
     {
+        [SerializeField] private Transform _model;
+
         private EnemyMover _mover;
         private Action<EnemyBehaviour> _onEnemyEndedPath;
 
-        public void Init(ITile tile, Action<EnemyBehaviour> onEnemyEndedPath)
+        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPath)
         {
-            transform.localPosition = tile.Transform.localPosition;
-            _mover.Init(tile);
+            _mover.Init(spawnTile);
             _onEnemyEndedPath = onEnemyEndedPath;
         }
 
