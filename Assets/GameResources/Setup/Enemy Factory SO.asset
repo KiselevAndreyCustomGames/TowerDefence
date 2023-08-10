@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: Enemy Factory SO
   m_EditorClassIdentifier: 
   _baseEnemyPrefab: {fileID: 3560460766948335402, guid: 8976387b46399e74298d795071693ea2, type: 3}
+  _scale:
+    _min: 0.5
+    _max: 1.9999999
+  _speed:
+    _min: 0.2
+    _max: 2.5

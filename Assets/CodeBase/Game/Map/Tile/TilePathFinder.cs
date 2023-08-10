@@ -1,3 +1,4 @@
+using CodeBase.Utility.Extension;
 using UnityEngine;
 
 namespace CodeBase.Game.Map
@@ -78,7 +79,7 @@ namespace CodeBase.Game.Map
 
             neibour.PathFinder.IncreaseDistance();
             neibour.PathFinder.SetNextOnPath(_tile);
-            neibour.ExitPoint = (neibour.Transform.localPosition + _tile.Transform.localPosition) * 0.5f;
+            neibour.ExitPoint = neibour.Transform.localPosition + direction.GetHalfVector();
             neibour.PathDirection = direction;
             return neibour.Content.Type == TileType.Wall ? null : neibour;
         }

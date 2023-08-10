@@ -11,10 +11,11 @@ namespace CodeBase.Game.Character.Enemy
         private EnemyMover _mover;
         private Action<EnemyBehaviour> _onEnemyEndedPath;
 
-        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPath)
+        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPath, EnemySpawnParameters parameters)
         {
-            _mover.Init(spawnTile);
+            _mover.Init(spawnTile, parameters.Speed);
             _onEnemyEndedPath = onEnemyEndedPath;
+            _model.localScale = Vector3.one * parameters.Scale;
         }
 
         public bool GameUpdate()
@@ -24,7 +25,7 @@ namespace CodeBase.Game.Character.Enemy
 
         private void Awake()
         {
-            _mover = new EnemyMover(transform, OnPathEnded);
+            _mover = new EnemyMover(transform, _model, OnPathEnded);
         }
 
         private void OnPathEnded()

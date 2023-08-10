@@ -13,8 +13,19 @@ namespace CodeBase.Utility.Extension
             Quaternion.Euler(0f, 270f, 0f)
         };
 
+        private static Vector3[] _halfVectors =
+        {
+            Vector3.forward * 0.5f,
+            Vector3.right * 0.5f,
+            Vector3.back * 0.5f,
+            Vector3.left * 0.5f
+        };
+
         public static Quaternion GetRotation(this Direction direction) =>
             _rotations[(int)direction];
+
+        public static Vector3 GetHalfVector(this Direction direction) =>
+            _halfVectors[(int)direction];
 
         public static DirectionChange GetChangeDirectionTo(this Direction current, Direction next)
         {

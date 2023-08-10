@@ -43,7 +43,7 @@ namespace CodeBase.Game
 
             var spawnTile = _spawnTiles.Random();
             var enemy = _enemyFactory.Spawn();
-            enemy.Init(spawnTile, OnEnemyEndedPath);
+            enemy.Init(spawnTile, OnEnemyEndedPath, _enemyFactory.GetRandomParameters());
             _collection.Add(enemy);
         }
 
