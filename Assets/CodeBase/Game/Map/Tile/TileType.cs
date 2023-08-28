@@ -5,6 +5,7 @@
         Empty,
         Destination,
         Wall,
-        EnemySpawnPoint
+        EnemySpawnPoint,
+        Tower
     }
 }

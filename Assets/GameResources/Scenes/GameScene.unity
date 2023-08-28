@@ -564,7 +564,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemySpawner:
     _enemyFactory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
-    _enemySpawnSpeed: 1
+    _enemySpawnSpeed: 0.2
   _map:
     _board:
       _ground: {fileID: 1020600127}

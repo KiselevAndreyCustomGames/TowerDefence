@@ -10,6 +10,7 @@ namespace CodeBase.Infrastructure.Game
         [SerializeField] private TileContent _destinationPrefab;
         [SerializeField] private TileContent _wallPrefab;
         [SerializeField] private TileContent _spawnPointPrefab;
+        [SerializeField] private TileContent _towerPrefab;
 
         public void Despawn(TileContent content) =>
             Lean.Pool.LeanPool.Despawn(content);
@@ -22,6 +23,7 @@ namespace CodeBase.Infrastructure.Game
                 TileType.Destination => SpawnInPool(_destinationPrefab),
                 TileType.Wall => SpawnInPool(_wallPrefab),
                 TileType.EnemySpawnPoint => SpawnInPool(_spawnPointPrefab),
+                TileType.Tower => SpawnInPool(_towerPrefab),
                 _ => null,
             };
         }

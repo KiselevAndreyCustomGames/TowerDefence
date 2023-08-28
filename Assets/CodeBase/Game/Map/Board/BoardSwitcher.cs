@@ -65,5 +65,21 @@ namespace CodeBase.Game.Map
                 _enemySpawnTiles.Add(tile);
             }
         }
+
+        public void ToggleTower(ITile tile)
+        {
+            if (tile.Content.Type == TileType.Tower)
+            {
+                ChangeContent(tile, TileType.Empty);
+                FindPaths();
+            }
+            else if (tile.Content.Type == TileType.Empty)
+            {
+                ChangeContent(tile, TileType.Tower);
+                if (FindPaths() == false)
+                    ChangeContent(tile, TileType.Empty);
+                FindPaths();
+            }
+        }
     }
 }

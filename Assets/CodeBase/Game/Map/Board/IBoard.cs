@@ -19,6 +19,7 @@ namespace CodeBase.Game.Map
         public List<ITile> EnemySpawnTiles { get; }
         public void ToggleDestination(ITile tile);
         public void ToggleWall(ITile tile);
+        public void ToggleTower(ITile tile);
         public void ToggleEnemySpawnPoint(ITile tile);
     }
 }
