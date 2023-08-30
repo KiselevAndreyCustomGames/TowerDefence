@@ -42,7 +42,7 @@ namespace CodeBase.Game
             if (tile != null)
             {
                 if (Input.GetKey(KeyCode.LeftShift))
-                    Debug.Log(tile.Content.Type);
+                    _board.ToggleTower(tile);
                 else
                     _board.ToggleWall(tile);
             }

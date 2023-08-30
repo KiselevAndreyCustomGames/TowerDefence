@@ -80,6 +80,8 @@ namespace CodeBase.Game.Map
                     ChangeContent(tile, TileType.Empty);
                 FindPaths();
             }
+            else if (tile.Content.Type == TileType.Wall)
+                ChangeContent(tile, TileType.Tower);
         }
     }
 }

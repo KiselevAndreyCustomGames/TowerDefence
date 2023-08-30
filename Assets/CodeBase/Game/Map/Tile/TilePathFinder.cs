@@ -58,8 +58,8 @@ namespace CodeBase.Game.Map
         }
 
         public ITile GrowPathNorth() => GrowPathTo(_north, Direction.South);
-        public ITile GrowPathEast() => GrowPathTo(_east, Direction.West);
         public ITile GrowPathSouth() => GrowPathTo(_south, Direction.North);
+        public ITile GrowPathEast() => GrowPathTo(_east, Direction.West);
         public ITile GrowPathWest() => GrowPathTo(_west, Direction.East);
         #endregion ITileSearch
 
@@ -81,7 +81,7 @@ namespace CodeBase.Game.Map
             neibour.PathFinder.SetNextOnPath(_tile);
             neibour.ExitPoint = neibour.Transform.localPosition + direction.GetHalfVector();
             neibour.PathDirection = direction;
-            return neibour.Content.Type == TileType.Wall ? null : neibour;
+            return neibour.Content.IsBlockingPath ? null : neibour;
         }
     }
 }
