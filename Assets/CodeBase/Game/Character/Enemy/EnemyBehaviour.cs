@@ -27,6 +27,10 @@ namespace CodeBase.Game.Character.Enemy
         {
             _mover = new EnemyMover(transform, _model, OnPathEnded);
         }
+        private void OnDrawGizmosSelected()
+        {
+            _mover.OnDrawGizmosSelected();
+        }
 
         private void OnPathEnded()
         {

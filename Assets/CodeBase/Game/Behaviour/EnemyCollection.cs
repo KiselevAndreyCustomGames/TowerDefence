@@ -1,6 +1,5 @@
 using CodeBase.Game.Character.Enemy;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace CodeBase.Game
 {
@@ -8,6 +7,8 @@ namespace CodeBase.Game
     public class EnemyCollection
     {
         private List<IEnemy> _enemies = new();
+
+        public int Count => _enemies.Count;
 
         public void Add(IEnemy enemy) =>
             _enemies.Add(enemy);

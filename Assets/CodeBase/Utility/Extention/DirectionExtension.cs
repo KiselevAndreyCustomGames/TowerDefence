@@ -5,7 +5,7 @@ namespace CodeBase.Utility.Extension
 {
     public static class DirectionExtension
     {
-        private static Quaternion[] _rotations =
+        private static readonly Quaternion[] _rotations =
         {
             Quaternion.identity,
             Quaternion.Euler(0f, 90f, 0f),
@@ -13,7 +13,7 @@ namespace CodeBase.Utility.Extension
             Quaternion.Euler(0f, 270f, 0f)
         };
 
-        private static Vector3[] _halfVectors =
+        private static readonly Vector3[] _halfVectors =
         {
             Vector3.forward * 0.5f,
             Vector3.right * 0.5f,

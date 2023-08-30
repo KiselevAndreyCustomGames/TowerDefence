@@ -64,5 +64,15 @@ namespace CodeBase.Game.Map
         {
             PathFinder = new TilePathFinder(this, _arrow);
         }
+
+        private void OnDrawGizmosSelected()
+        {
+            if(PathFinder != null)
+            {
+                Gizmos.color = Color.yellow;
+                var position = Vector3.Lerp(transform.position, ExitPoint, 0.9f);
+                Gizmos.DrawSphere(position, 0.1f);
+            }
+        }
     }
 }

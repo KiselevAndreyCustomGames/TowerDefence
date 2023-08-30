@@ -7,7 +7,10 @@ namespace CodeBase.Infrastructure.Game
     public class EnemyFactorySO : GameObjectFactorySO
     {
         [SerializeField] private EnemyBehaviour _baseEnemyPrefab;
+        [Tooltip("Min & Max size")]
         [SerializeField, FloatRangeSlider(0.3f, 2.5f)] private FloatRange _scale;
+        [Tooltip("Range usable size")]
+        [SerializeField, FloatRangeSlider(0f, 1f)] private FloatRange _scaleRange;
         [SerializeField, FloatRangeSlider(0.1f, 3f)] private FloatRange _speed;
 
         public void Despawn(EnemyBehaviour content) =>
@@ -26,7 +29,8 @@ namespace CodeBase.Infrastructure.Game
 
         public EnemySpawnParameters GetRandomParameters()
         {
-            var scale = _scale.Random;
+            var scaleRange = _scaleRange.Random;
+            var scale = _scale.PercentageAt(scaleRange);
             var percentageOfGigantizm = _scale.FindPercentage(scale);
             var speed = _speed.PercentageAt(1 - percentageOfGigantizm);
 

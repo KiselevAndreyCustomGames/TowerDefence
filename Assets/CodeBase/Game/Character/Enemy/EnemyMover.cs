@@ -31,7 +31,7 @@ namespace CodeBase.Game.Character.Enemy
         public void Init(ITile spawnTile, float speed)
         {
             _speed = speed;
-            SetNewPathParameters(spawnTile);
+            SpawnOn(spawnTile);
             _progress = 0;
         }
 
@@ -61,7 +61,15 @@ namespace CodeBase.Game.Character.Enemy
             return true;
         }
 
-        private void SetNewPathParameters(ITile spawnTile)
+        public void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(_positionTo, 0.1f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(_positionFrom, 0.1f);
+        }
+
+        private void SpawnOn(ITile spawnTile)
         {
             _tileFrom = spawnTile;
             _tileTo = spawnTile.NextTileOnPath;
@@ -70,7 +78,7 @@ namespace CodeBase.Game.Character.Enemy
             _direction = _tileFrom.PathDirection;
             _directionChange = DirectionChange.None;
             PrepareForward();
-            _directionAngleTo = _directionAngleFrom;
+            _directionAngleFrom = _directionAngleTo;
             _progressFactor = 2f * _speed;
         }
 
@@ -108,10 +116,9 @@ namespace CodeBase.Game.Character.Enemy
 
         private void PrepareForward()
         {
-            _transform.localRotation = _direction.GetRotation();
+            _transform.SetLocalPositionAndRotation(_positionFrom, _direction.GetRotation());
             _directionAngleTo = _direction.GetAngle();
             _model.localPosition = Vector3.zero;
-            _transform.localPosition = _positionFrom;
             _progressFactor = _speed;
         }
 
