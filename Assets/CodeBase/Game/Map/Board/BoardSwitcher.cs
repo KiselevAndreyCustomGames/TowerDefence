@@ -7,15 +7,17 @@ namespace CodeBase.Game.Map
     {
         private readonly Func<bool> FindPaths;
         private readonly Action<ITile, TileType> ChangeContent;
+        private readonly Action<ITile, TowerType> ChangeTowerContent;
         private readonly List<ITile> _enemySpawnTiles = new();
         private readonly List<TileContent> _contentToUpdate = new();
 
         public List<ITile> EnemySpawnTiles => _enemySpawnTiles;
 
-        public BoardSwitcher(Func<bool> findPaths, Action<ITile, TileType> changeContent)
+        public BoardSwitcher(Func<bool> findPaths, Action<ITile, TileType> changeContent, Action<ITile, TowerType> changeTowerContent)
         {
             FindPaths = findPaths;
             ChangeContent = changeContent;
+            ChangeTowerContent = changeTowerContent;
         }
 
         public void ToggleDestination(ITile tile)
@@ -67,7 +69,7 @@ namespace CodeBase.Game.Map
             }
         }
 
-        public void ToggleTower(ITile tile)
+        public void ToggleTower(ITile tile, TowerType towerType)
         {
             if (tile.Content.Type == TileType.Tower)
             {
@@ -77,7 +79,7 @@ namespace CodeBase.Game.Map
             }
             else if (tile.Content.Type == TileType.Empty)
             {
-                ChangeContent(tile, TileType.Tower);
+                ChangeTowerContent(tile, towerType);
                 if (FindPaths())
                     _contentToUpdate.Add(tile.Content);
                 else
@@ -87,7 +89,7 @@ namespace CodeBase.Game.Map
             else if (tile.Content.Type == TileType.Wall)
             {
                 _contentToUpdate.Add(tile.Content);
-                ChangeContent(tile, TileType.Tower);
+                ChangeTowerContent(tile, towerType);
             }
         }
 

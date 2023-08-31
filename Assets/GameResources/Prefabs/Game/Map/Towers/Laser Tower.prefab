@@ -191,7 +191,6 @@ GameObject:
   - component: {fileID: 7754772631935997139}
   - component: {fileID: 3112138503236898179}
   - component: {fileID: 4729528035571776923}
-  - component: {fileID: 2077718296381285252}
   m_Layer: 6
   m_Name: Tower Base
   m_TagString: Untagged
@@ -264,19 +263,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2077718296381285252
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8494572675997938508}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &9087766834858289195
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +371,7 @@ GameObject:
   - component: {fileID: 9087766836070611555}
   - component: {fileID: 9174662474369168771}
   m_Layer: 6
-  m_Name: Tower
+  m_Name: Laser Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -419,13 +405,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 9087766836070611557}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fff0041c574dfd4facc8f56b2a18990, type: 3}
+  m_Script: {fileID: 11500000, guid: 234ef3568c574e84b8cb799b30065393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <Type>k__BackingField: 4
-  _targetingRange: 2
+  Range: 1.5
+  Damage: 5
   _targeringMask:
     serializedVersion: 2
     m_Bits: 256
-  _turret: {fileID: 3401184042118210597}
+  Turret: {fileID: 3401184042118210597}
   _laserBeam: {fileID: 6343659811718268369}

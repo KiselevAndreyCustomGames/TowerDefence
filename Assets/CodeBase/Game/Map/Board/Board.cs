@@ -23,8 +23,8 @@ namespace CodeBase.Game.Map
         public void Initialize(Vector2Int size)
         {
             _ground.localScale = new(size.x, size.y, 1f);
-            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _boardMask, ChangeContent, UseAlternative);
-            _switcher = new BoardSwitcher(FindPaths, ChangeContent);
+            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _boardMask, ChangeTileContent, UseAlternative);
+            _switcher = new BoardSwitcher(FindPaths, ChangeTileContent, ChangeTowerContent);
         }
 
         public bool FindPaths() => _constructor.FindPaths();
@@ -33,19 +33,20 @@ namespace CodeBase.Game.Map
         public void ToggleDestination(ITile tile) => _switcher.ToggleDestination(tile);
         public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
         public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
-        public void ToggleTower(ITile tile) => _switcher.ToggleTower(tile);
+        public void ToggleTower(ITile tile, TowerType towerType) => _switcher.ToggleTower(tile, towerType);
         public void GameUpdate() => _switcher.GameUpdate();
 
-        private void ChangeContent(ITile tile, TileType newType)
+        private void ChangeTileContent(ITile tile, TileType newType) => ChangeContent(tile, _tileContentFactory.Spawn(newType));
+        private void ChangeTowerContent(ITile tile, TowerType newType) => ChangeContent(tile, _tileContentFactory.Spawn(newType));
+        private void ChangeContent(ITile tile, TileContent newContent)
         {
-            var content = _tileContentFactory.Spawn(newType);
-            if (tile.Content != content)
+            if (tile.Content != newContent)
             {
                 _tileContentFactory.Despawn(tile.Content);
-                tile.Content = content;
+                tile.Content = newContent;
             }
             else
-                _tileContentFactory.Despawn(content);
+                _tileContentFactory.Despawn(newContent);
         }
 
         private bool UseAlternative() => _useAlternative;

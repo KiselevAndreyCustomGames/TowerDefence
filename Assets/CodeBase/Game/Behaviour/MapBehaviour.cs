@@ -12,6 +12,7 @@ namespace CodeBase.Game
         [SerializeField] private Vector2Int _boardSize;
 
         private Camera _camera;
+        private TowerType _towerType;
 
         private Ray TouchRay => _camera.ScreenPointToRay(Input.mousePosition);
 
@@ -30,6 +31,11 @@ namespace CodeBase.Game
 
         public void GameUpdate()
         {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+                _towerType = TowerType.Laser;
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+                _towerType = TowerType.Mortar;
+
             if (Input.GetMouseButtonUp(0))
                 HandleTouch();
             else if (Input.GetMouseButtonUp(1))
@@ -46,7 +52,7 @@ namespace CodeBase.Game
                 if (Input.GetKey(KeyCode.LeftShift))
                     _board.ToggleWall(tile);
                 else
-                    _board.ToggleTower(tile);
+                    _board.ToggleTower(tile, _towerType);
             }
         }
 

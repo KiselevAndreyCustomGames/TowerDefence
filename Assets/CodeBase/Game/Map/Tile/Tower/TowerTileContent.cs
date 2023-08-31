@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace CodeBase.Game.Map
 {
-    public class TowerTileContent : TileContent
+    public abstract class TowerTileContent : TileContent
     {
-        [SerializeField, Range(1, 5)] private float _targetingRange = 1.5f;
-        [SerializeField, Range(1, 10)] private float _damagePerSec = 1.5f;
+        [SerializeField, Range(1, 5)] protected float Range = 1.5f;
+        [SerializeField, Range(1, 100)] protected float Damage = 1.5f;
         [SerializeField] private LayerMask _targeringMask;
-        [SerializeField] private Transform _turret;
-        [SerializeField] private Transform _laserBeam;
+        [SerializeField] protected Transform Turret;
 
-        private EnemyTarger _target;
-        private Vector3 _laserBeamScale;
-        private readonly Collider[] _overlapReults = new Collider[32];
+        protected  EnemyTarger Target;
+        private readonly Collider[] _overlapResults = new Collider[32];
+
+        public abstract TowerType TowerType { get; }
 
         public override void GameUpdate()
         {
@@ -23,69 +23,35 @@ namespace CodeBase.Game.Map
                 Shoot();
         }
 
-        protected override void OnAwake()
-        {
-            _laserBeamScale = _laserBeam.localScale;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Vector3 position = transform.localPosition;
-            position.y += 0.5f;
-            Gizmos.DrawWireSphere(position, _targetingRange);
-            if(_target != null)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(position, _target.Position);
-            }
-        }
+        protected virtual void Shoot() { }
+        protected virtual void EndTargeting() { }
 
         private bool IsAcquireTarget()
         {
-            var overlapCount = Physics.OverlapSphereNonAlloc(transform.localPosition, _targetingRange, _overlapReults, _targeringMask.value);
+            var overlapCount = Physics.OverlapSphereNonAlloc(transform.localPosition, Range, _overlapResults, _targeringMask.value);
             if(overlapCount > 0 )
             {
-                _target = _overlapReults[0].GetComponent<EnemyTarger>();
+                Target = _overlapResults[0].GetComponent<EnemyTarger>();
                 return true;
             }
 
-            _target = null;
+            Target = null;
             return false;
         }
 
         private bool IsTargetTracked()
         {
-            if (_target == null)
+            if (Target == null)
                 return false;
 
-            if(Vector3.Distance(_target.Position, transform.localPosition) > _targetingRange + _target.ColliderSize)
+            if(Vector3.Distance(Target.Position, transform.localPosition) > Range + Target.ColliderSize)
             {
-                _target = null;
-                EndShoot();
+                Target = null;
+                EndTargeting();
                 return false;
             }
 
             return true;
-        }
-
-        private void Shoot()
-        {
-            var point = _target.Position;
-            _turret.LookAt(point);
-            _laserBeam.localRotation = _turret.localRotation;
-
-            var distance = Vector3.Distance(_turret.position, point);
-            _laserBeamScale.z = distance;
-            _laserBeam.localScale = _laserBeamScale;
-            _laserBeam.localPosition = _turret.localPosition + 0.5f * distance * _laserBeam.forward;
-
-            _target.Enemy.TakeDamage(Time.deltaTime * _damagePerSec);
-        }
-
-        private void EndShoot()
-        {
-            _laserBeam.localScale = Vector3.zero;
         }
     }
 }
