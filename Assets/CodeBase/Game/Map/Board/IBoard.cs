@@ -21,5 +21,6 @@ namespace CodeBase.Game.Map
         public void ToggleWall(ITile tile);
         public void ToggleTower(ITile tile);
         public void ToggleEnemySpawnPoint(ITile tile);
+        public void GameUpdate();
     }
 }

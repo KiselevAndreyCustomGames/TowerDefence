@@ -247,7 +247,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 855757523}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -432,7 +432,7 @@ GameObject:
   - component: {fileID: 1020600130}
   - component: {fileID: 1020600129}
   - component: {fileID: 1020600128}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -564,7 +564,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemySpawner:
     _enemyFactory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
-    _enemySpawnSpeed: 0.2
+    _enemySpawnSpeed: 1
     _enemyMaxCount: 1
   _map:
     _board:
@@ -573,4 +573,7 @@ MonoBehaviour:
       _tilePrefab: {fileID: 4775346636236575404, guid: 2bdb570ed5708aa4abf80ad56239a6b7, type: 3}
       _tileContentFactory: {fileID: 11400000, guid: b673148970ab48c4f9be8188ac70bd87, type: 2}
       _useAlternative: 1
+      _boardMask:
+        serializedVersion: 2
+        m_Bits: 64
     _boardSize: {x: 11, y: 11}

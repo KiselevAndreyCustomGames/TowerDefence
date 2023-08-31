@@ -7,11 +7,10 @@ namespace CodeBase.Infrastructure.Game
     public class EnemyFactorySO : GameObjectFactorySO
     {
         [SerializeField] private EnemyBehaviour _baseEnemyPrefab;
-        [Tooltip("Min & Max size")]
         [SerializeField, FloatRangeSlider(0.3f, 2.5f)] private FloatRange _scale;
-        [Tooltip("Range usable size")]
         [SerializeField, FloatRangeSlider(0f, 1f)] private FloatRange _scaleRange;
         [SerializeField, FloatRangeSlider(0.1f, 3f)] private FloatRange _speed;
+        [SerializeField, Range(10, 10000)] private int _initHealth;
 
         public void Despawn(EnemyBehaviour content) =>
             Lean.Pool.LeanPool.Despawn(content);
@@ -33,8 +32,9 @@ namespace CodeBase.Infrastructure.Game
             var scale = _scale.PercentageAt(scaleRange);
             var percentageOfGigantizm = _scale.FindPercentage(scale);
             var speed = _speed.PercentageAt(1 - percentageOfGigantizm);
+            var health = _initHealth * scale;
 
-            return new(scale, speed);
+            return new(scale, speed, health);
         }
     }
 }

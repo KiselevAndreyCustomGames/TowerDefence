@@ -17,23 +17,25 @@ namespace CodeBase.Game
 
         public List<ITile> EnemySpawnTiles => _board.EnemySpawnTiles;
 
-        public void OnAwake()
+        public void Awake()
         {
             _camera = Camera.main;
         }
 
-        public void OnStart()
+        public void Start()
         {
             _board.Initialize(_boardSize);
             _board.FindPaths();
         }
 
-        public void OnUpdate()
+        public void GameUpdate()
         {
             if (Input.GetMouseButtonUp(0))
                 HandleTouch();
             else if (Input.GetMouseButtonUp(1))
                 HandleAlternativeTouch();
+
+            _board.GameUpdate();
         }
 
         private void HandleTouch()
@@ -42,9 +44,9 @@ namespace CodeBase.Game
             if (tile != null)
             {
                 if (Input.GetKey(KeyCode.LeftShift))
-                    _board.ToggleTower(tile);
-                else
                     _board.ToggleWall(tile);
+                else
+                    _board.ToggleTower(tile);
             }
         }
 

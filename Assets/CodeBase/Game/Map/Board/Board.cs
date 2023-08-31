@@ -13,6 +13,7 @@ namespace CodeBase.Game.Map
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private TileContentFactorySO _tileContentFactory;
         [SerializeField] private bool _useAlternative = true;
+        [SerializeField] private LayerMask _boardMask;
 
         private IBoardConstructor _constructor;
         private IBoardSwitcher _switcher;
@@ -22,7 +23,7 @@ namespace CodeBase.Game.Map
         public void Initialize(Vector2Int size)
         {
             _ground.localScale = new(size.x, size.y, 1f);
-            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, ChangeContent, UseAlternative);
+            _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _boardMask, ChangeContent, UseAlternative);
             _switcher = new BoardSwitcher(FindPaths, ChangeContent);
         }
 
@@ -33,6 +34,7 @@ namespace CodeBase.Game.Map
         public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
         public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
         public void ToggleTower(ITile tile) => _switcher.ToggleTower(tile);
+        public void GameUpdate() => _switcher.GameUpdate();
 
         private void ChangeContent(ITile tile, TileType newType)
         {

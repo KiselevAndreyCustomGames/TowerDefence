@@ -17,8 +17,9 @@ MonoBehaviour:
     _min: 0.5
     _max: 2
   _scaleRange:
-    _min: 0.089127004
-    _max: 0.18912697
+    _min: 0
+    _max: 1
   _speed:
-    _min: 0.2
+    _min: 1
     _max: 2.5
+  _initHealth: 10

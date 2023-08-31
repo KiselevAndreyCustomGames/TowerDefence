@@ -14,7 +14,7 @@ namespace CodeBase.Game
 
         [SerializeField] private EnemyFactorySO _enemyFactory;
         [SerializeField, Range(0.1f, 5f)] private float _enemySpawnSpeed;
-        [SerializeField, Range(1, 100)] private int _enemyMaxCount;
+        [SerializeField, Range(1, 1000)] private int _enemyMaxCount;
 
         private List<ITile> _spawnTiles;
 
@@ -26,7 +26,7 @@ namespace CodeBase.Game
             _spawnTiles = spawnTiles;
         }
 
-        public void OnUpdate()
+        public void GameUpdate()
         {
             if(_canSpawn == false && _spawnProgress < 1f)
                 _spawnProgress += Time.deltaTime * _enemySpawnSpeed;

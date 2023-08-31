@@ -9,32 +9,48 @@ namespace CodeBase.Game.Character.Enemy
         [SerializeField] private Transform _model;
 
         private EnemyMover _mover;
-        private Action<EnemyBehaviour> _onEnemyEndedPath;
+        private readonly HealthBehaviour _health = new();
+        private Action<EnemyBehaviour> _onEnemyEndedPathOrDie;
 
-        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPath, EnemySpawnParameters parameters)
+        public float Scale {get; private set;}
+
+        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPathOrDie, EnemySpawnParameters parameters)
         {
             _mover.Init(spawnTile, parameters.Speed);
-            _onEnemyEndedPath = onEnemyEndedPath;
+            _onEnemyEndedPathOrDie = onEnemyEndedPathOrDie;
             _model.localScale = Vector3.one * parameters.Scale;
+            Scale = parameters.Scale;
+            _health.Init(parameters.Health);
         }
 
         public bool GameUpdate()
         {
+            if (_health.IsAlive == false)
+            {
+                OnPathEndedOrDie();
+                return false;
+            }
             return _mover.Update();
+        }
+
+        public void TakeDamage(float damage)
+        {
+            _health.TakeDamage(damage);
         }
 
         private void Awake()
         {
-            _mover = new EnemyMover(transform, _model, OnPathEnded);
-        }
-        private void OnDrawGizmosSelected()
-        {
-            _mover.OnDrawGizmosSelected();
+            _mover = new EnemyMover(transform, _model, OnPathEndedOrDie);
         }
 
-        private void OnPathEnded()
+        private void OnDrawGizmosSelected()
         {
-            _onEnemyEndedPath?.Invoke(this);
+            _mover?.OnDrawGizmosSelected();
+        }
+
+        private void OnPathEndedOrDie()
+        {
+            _onEnemyEndedPathOrDie?.Invoke(this);
         }
     }
 }

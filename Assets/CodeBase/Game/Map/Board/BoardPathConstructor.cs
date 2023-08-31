@@ -1,4 +1,3 @@
-using CodeBase.Utility.Extension;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,10 +10,12 @@ namespace CodeBase.Game.Map
         private readonly Func<bool> UseAlternative;
         private readonly ITile[] _tiles;
         private readonly Queue<ITile> _serchFrontier = new();
+        private readonly LayerMask _boardMask;
 
-        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, Action<ITile, TileType> changeContent, Func<bool> useAlternative)
+        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, LayerMask boardMask, Action<ITile, TileType> changeContent, Func<bool> useAlternative)
         {
             _size = size;
+            _boardMask = boardMask;
             UseAlternative = useAlternative;
             _tiles = new ITile[size.x * size.y];
 
@@ -46,7 +47,7 @@ namespace CodeBase.Game.Map
 
         public ITile GetTile(Ray ray)
         {
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, _boardMask))
             {
                 int x = (int)(hit.point.x + _size.x * 0.5f);
                 int y = (int)(hit.point.z + _size.y * 0.5f);

@@ -1,7 +1,8 @@
 namespace CodeBase.Game.Character.Enemy
 {
-    public interface IEnemy
+    public interface IEnemy : IDamageable
     {
+        public float Scale { get; }
         public bool GameUpdate();
     }
 }

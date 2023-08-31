@@ -8,6 +8,7 @@ namespace CodeBase.Game.Map
         private readonly Func<bool> FindPaths;
         private readonly Action<ITile, TileType> ChangeContent;
         private readonly List<ITile> _enemySpawnTiles = new();
+        private readonly List<TileContent> _contentToUpdate = new();
 
         public List<ITile> EnemySpawnTiles => _enemySpawnTiles;
 
@@ -70,18 +71,30 @@ namespace CodeBase.Game.Map
         {
             if (tile.Content.Type == TileType.Tower)
             {
+                _contentToUpdate.Remove(tile.Content);
                 ChangeContent(tile, TileType.Empty);
                 FindPaths();
             }
             else if (tile.Content.Type == TileType.Empty)
             {
                 ChangeContent(tile, TileType.Tower);
-                if (FindPaths() == false)
+                if (FindPaths())
+                    _contentToUpdate.Add(tile.Content);
+                else
                     ChangeContent(tile, TileType.Empty);
                 FindPaths();
             }
             else if (tile.Content.Type == TileType.Wall)
+            {
+                _contentToUpdate.Add(tile.Content);
                 ChangeContent(tile, TileType.Tower);
+            }
+        }
+
+        public void GameUpdate()
+        {
+            foreach (var content in _contentToUpdate)
+                content.GameUpdate();
         }
     }
 }

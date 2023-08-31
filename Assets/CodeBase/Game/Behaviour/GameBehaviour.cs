@@ -9,19 +9,20 @@ namespace CodeBase.Game
 
         private void Awake()
         {
-            _map.OnAwake();
+            _map.Awake();
         }
 
         private void Start()
         {
-            _map.OnStart();
+            _map.Start();
             _enemySpawner.Init(_map.EnemySpawnTiles);
         }
 
         private void Update()
         {
-            _map.OnUpdate();
-            _enemySpawner.OnUpdate();
+            _enemySpawner.GameUpdate();
+            Physics.SyncTransforms();
+            _map.GameUpdate();
         }
     }
 }
