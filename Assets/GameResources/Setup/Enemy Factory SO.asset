@@ -22,4 +22,4 @@ MonoBehaviour:
   _speed:
     _min: 1
     _max: 2.5
-  _initHealth: 10
+  _initHealth: 200
