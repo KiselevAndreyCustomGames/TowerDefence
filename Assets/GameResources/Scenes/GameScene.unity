@@ -577,3 +577,5 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 64
     _boardSize: {x: 11, y: 11}
+  _projectiles:
+    _factorySO: {fileID: 11400000, guid: 983b58a4d7192574a988fafd4974372d, type: 2}

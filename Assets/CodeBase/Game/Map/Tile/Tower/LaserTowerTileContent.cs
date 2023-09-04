@@ -10,12 +10,26 @@ namespace CodeBase.Game.Map
 
         public override TowerType TowerType => TowerType.Laser;
 
+
+        public override bool GameUpdate()
+        {
+            if (HasTarget)
+                Shoot();
+
+            return base.GameUpdate();
+        }
+
         protected override void OnAwake()
         {
             _laserBeamScale = _laserBeam.localScale;
         }
 
-        protected override void Shoot()
+        protected override void EndTargeting()
+        {
+            _laserBeam.localScale = Vector3.zero;
+        }
+
+        private void Shoot()
         {
             var point = Target.Position;
             Turret.LookAt(point);
@@ -27,11 +41,6 @@ namespace CodeBase.Game.Map
             _laserBeam.localPosition = Turret.localPosition + 0.5f * distance * _laserBeam.forward;
 
             Target.Enemy.TakeDamage(Time.deltaTime * Damage);
-        }
-
-        protected override void EndTargeting()
-        {
-            _laserBeam.localScale = Vector3.zero;
         }
     }
 }

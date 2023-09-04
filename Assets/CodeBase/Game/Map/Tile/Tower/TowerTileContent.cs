@@ -4,34 +4,39 @@ using UnityEngine;
 
 namespace CodeBase.Game.Map
 {
-    public abstract class TowerTileContent : TileContent
+    public abstract class TowerTileContent : TileContent, IPlayable
     {
         [SerializeField, Range(1, 5)] protected float Range = 1.5f;
         [SerializeField, Range(1, 100)] protected float Damage = 1.5f;
-        [SerializeField] private LayerMask _targeringMask;
         [SerializeField] protected Transform Turret;
 
         protected  EnemyTarger Target;
-        private readonly Collider[] _overlapResults = new Collider[32];
+
+        [SerializeField] private bool _isUpdated = true;
 
         public abstract TowerType TowerType { get; }
 
-        public override void GameUpdate()
+        protected bool HasTarget => IsTargetTracked() || IsAcquireTarget();
+
+        public virtual void Init(ProjectileGameBehaviour projectiles) 
         {
-            if (IsTargetTracked()
-               || IsAcquireTarget())
-                Shoot();
+            _isUpdated = true;
         }
 
-        protected virtual void Shoot() { }
+        public virtual bool GameUpdate() => _isUpdated;
+
         protected virtual void EndTargeting() { }
+
+        private void OnDisable()
+        {
+            _isUpdated = false;
+        }
 
         private bool IsAcquireTarget()
         {
-            var overlapCount = Physics.OverlapSphereNonAlloc(transform.localPosition, Range, _overlapResults, _targeringMask.value);
-            if(overlapCount > 0 )
+            if (EnemyTarger.FillOverlap(transform.localPosition, Range))
             {
-                Target = _overlapResults[0].GetComponent<EnemyTarger>();
+                Target = EnemyTarger.GetOverlapTarget(0);
                 return true;
             }
 

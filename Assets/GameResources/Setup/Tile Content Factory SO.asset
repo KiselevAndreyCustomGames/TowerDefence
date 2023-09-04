@@ -19,3 +19,5 @@ MonoBehaviour:
   _towers:
   - <Type>k__BackingField: 0
     <Prefab>k__BackingField: {fileID: 9174662474369168771, guid: 338522c021eeccf40af933b6f15a5ad6, type: 3}
+  - <Type>k__BackingField: 1
+    <Prefab>k__BackingField: {fileID: 4295018949559497007, guid: 3bc9b8ac95856784cb4b3728ea579546, type: 3}

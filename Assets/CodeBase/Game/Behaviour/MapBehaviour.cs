@@ -23,9 +23,9 @@ namespace CodeBase.Game
             _camera = Camera.main;
         }
 
-        public void Start()
+        public void Start(ProjectileGameBehaviour projectiles)
         {
-            _board.Initialize(_boardSize);
+            _board.Initialize(_boardSize, projectiles);
             _board.FindPaths();
         }
 

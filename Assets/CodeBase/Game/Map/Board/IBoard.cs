@@ -5,7 +5,8 @@ namespace CodeBase.Game.Map
 {
     public interface IBoard : IBoardConstructor, IBoardSwitcher
     {
-        public void Initialize(Vector2Int size);
+        public void Initialize(Vector2Int size, ProjectileGameBehaviour projectiles);
+        public void GameUpdate();
     }
 
     public interface IBoardConstructor
@@ -21,6 +22,5 @@ namespace CodeBase.Game.Map
         public void ToggleWall(ITile tile);
         public void ToggleTower(ITile tile, TowerType towerType);
         public void ToggleEnemySpawnPoint(ITile tile);
-        public void GameUpdate();
     }
 }

@@ -49,11 +49,10 @@ MonoBehaviour:
   <Type>k__BackingField: 4
   Range: 3
   Damage: 50
-  _targeringMask:
-    serializedVersion: 2
-    m_Bits: 256
   Turret: {fileID: 9176185749292531469}
+  _isUpdated: 1
   _shootsPesSeconds: 1
+  _shellBlastRadius: 0.5
 --- !u!1 &3347592096234484483
 GameObject:
   m_ObjectHideFlags: 0

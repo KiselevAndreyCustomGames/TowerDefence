@@ -10,7 +10,7 @@ namespace CodeBase.Game
     [System.Serializable]
     public class EnemySpawnBehaviour
     {
-        private readonly EnemyCollection _collection = new();
+        private readonly GameCollection _collection = new();
 
         [SerializeField] private EnemyFactorySO _enemyFactory;
         [SerializeField, Range(0.1f, 5f)] private float _enemySpawnSpeed;
