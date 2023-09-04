@@ -7,8 +7,10 @@ namespace CodeBase.Infrastructure.Game
     public class ProjectileFactorySO : GameObjectFactorySO
     {
         [SerializeField] private Shell _shellPrefab;
+        [SerializeField] private Explosion _explosionPrefab;
 
         public Shell Shell => SpawnInPool(_shellPrefab);
+        public Explosion Explosion => SpawnInPool(_explosionPrefab);
 
         public void Despawn(Projectile content) =>
             Lean.Pool.LeanPool.Despawn(content);

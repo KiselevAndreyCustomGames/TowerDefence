@@ -11,11 +11,12 @@ namespace CodeBase.Game.Projectiles
 
         private Vector3 _launchPoint, _targetPoint, _launchVelocity;
 
-        private float _age, _shellBlastRadius, _damage;
+        private float _shellBlastRadius, _damage;
 
         private Action<Projectile> OnHitGround;
+        private Func<Explosion> SpawnExplosion;
 
-        public void Init(Vector3 launchPoint, Vector3 targetPoint, Vector3 launchVelocity, Action<Projectile> despawn, float shellBlastRadius, float damage)
+        public void Init(Vector3 launchPoint, Vector3 targetPoint, Vector3 launchVelocity, Action<Projectile> despawn, Func<Explosion> spawnExplosion, float shellBlastRadius, float damage)
         {
             _launchPoint = launchPoint;
             _targetPoint = targetPoint;
@@ -24,42 +25,38 @@ namespace CodeBase.Game.Projectiles
             _damage = damage;
 
             OnHitGround = despawn;
+            SpawnExplosion = spawnExplosion;
 
-            _age = 0f;
-            transform.localPosition = _launchPoint;
-            CanUpdate = true;
+            Init(launchPoint);
         }
 
         public override bool GameUpdate()
         {
-            _age += Time.deltaTime;
+            Age += Time.deltaTime;
 
-            Vector3 p = _launchPoint + _launchVelocity * _age;
-            p.y -= 0.5f * g * _age * _age;
+            Vector3 p = _launchPoint + _launchVelocity * Age;
+            p.y -= 0.5f * g * Age * Age;
             transform.localPosition = p;
 
             Vector3 d = _launchVelocity;
-            d.y -= g * _age;
+            d.y -= g * Age;
             transform.localRotation = Quaternion.LookRotation(d);
 
-            if(p.y < 0)
+            if (p.y < 0)
             {
-                EnemyTarger.FillOverlap(_targetPoint, _shellBlastRadius);
-                for (int i = 0; i < EnemyTarger.OverlapCount; i++)
-                {
-                    EnemyTarger.GetOverlapTarget(i).Enemy.TakeDamage(_damage);
-                }
                 Explosion(_targetPoint, _shellBlastRadius, _damage);
-                OnHitGround.Invoke(this);
-                CanUpdate = false;
+                OnHitGround(this);
+                return false;
             }
+            
+            Explosion(transform.localPosition, 0.1f, 0);
 
-            return CanUpdate;
+            return true;
         }
 
         public void Explosion(Vector3 position, float radius, float damage)
         {
-
+            SpawnExplosion().Init(position, radius, damage, OnHitGround);
         }
     }
 }

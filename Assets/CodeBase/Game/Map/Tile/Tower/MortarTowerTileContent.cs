@@ -86,7 +86,8 @@ namespace CodeBase.Game.Map
 
                 _projectiles.SpawnShell().Init(launchPoint, targetPoint,
                     new Vector3(s * cosTheta * dir.x, s * sinTheta, s * cosTheta * dir.z),
-                    _projectiles.Despawn, _shellBlastRadius, Damage);
+                    _projectiles.Despawn, _projectiles.SpawnExplosion,
+                    _shellBlastRadius, Damage);
 
                 _canShoot = false;
                 _shootProgress = 1f;

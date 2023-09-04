@@ -23,15 +23,31 @@ namespace CodeBase.Game
             return shell;
         }
 
+        public Explosion SpawnExplosion()
+        {
+            var explosion = _factorySO.Explosion;
+            _collection.Add(explosion);
+            return explosion;
+        }
+
         public void Despawn(Projectile projectile)
         {
             _factorySO.Despawn(projectile);
         }
     }
 
-    public interface IShellSpawner
+    public interface IProjectileSpawner
+    {
+        public void Despawn(Projectile projectile);
+    }
+
+    public interface IShellSpawner : IExplosionSpawner
     {
         public Shell SpawnShell();
-        public void Despawn(Projectile projectile);
+    }
+
+    public interface IExplosionSpawner : IProjectileSpawner
+    {
+        public Explosion SpawnExplosion();
     }
 }

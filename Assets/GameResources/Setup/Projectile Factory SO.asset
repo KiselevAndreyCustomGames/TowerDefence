@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Projectile Factory SO
   m_EditorClassIdentifier: 
   _shellPrefab: {fileID: 3685696112060835555, guid: 97efe7a689917d84aaacb0d7b274b6e8, type: 3}
+  _explosionPrefab: {fileID: 2899587364437484337, guid: 12e1d9bd777106e48a491df43fe77acb, type: 3}

@@ -12,7 +12,7 @@ namespace CodeBase.Game.Map
 
         protected  EnemyTarger Target;
 
-        [SerializeField] private bool _isUpdated = true;
+        private bool _isUpdated = true;
 
         public abstract TowerType TowerType { get; }
 

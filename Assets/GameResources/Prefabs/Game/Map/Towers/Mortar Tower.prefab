@@ -50,9 +50,8 @@ MonoBehaviour:
   Range: 3
   Damage: 50
   Turret: {fileID: 9176185749292531469}
-  _isUpdated: 1
   _shootsPesSeconds: 1
-  _shellBlastRadius: 0.5
+  _shellBlastRadius: 1
 --- !u!1 &3347592096234484483
 GameObject:
   m_ObjectHideFlags: 0
