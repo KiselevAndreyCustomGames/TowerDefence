@@ -33,21 +33,21 @@ namespace CodeBase.Game
             else
             {
                 _canSpawn = true;
-                SpawnEnemy();
+                SpawnEnemy(EnumExtension.GetRandom<EnemyType>());
             }
 
             _collection.GameUpdate();
         }
 
-        private void SpawnEnemy()
+        private void SpawnEnemy(EnemyType type)
         {
             if (_spawnTiles.Count == 0
                 || _collection.Count >= _enemyMaxCount)
                 return;
 
             var spawnTile = _spawnTiles.Random();
-            var enemy = _enemyFactory.Spawn();
-            enemy.Init(spawnTile, OnEnemyEndedPath, _enemyFactory.GetRandomParameters());
+            var enemy = _enemyFactory.Spawn(type);
+            enemy.Init(spawnTile, OnEnemyEndedPath, _enemyFactory.GetRandomParameters(type));
             _collection.Add(enemy);
 
             _spawnProgress -= 1f;

@@ -17,7 +17,7 @@ namespace CodeBase.Game.Projectiles
 
         private float _scale;
 
-        private static int _colorPropId = Shader.PropertyToID("_BaseColor");
+        private static readonly int _colorPropId = Shader.PropertyToID("_BaseColor");
 
         public void Init(Vector3 position, float radius, float damage, Action<Projectile> despawn)
         {

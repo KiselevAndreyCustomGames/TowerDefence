@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Type>k__BackingField: 4
   Range: 3
-  Damage: 50
+  Damage: 20
   Turret: {fileID: 9176185749292531469}
   _shootsPesSeconds: 1
   _shellBlastRadius: 1

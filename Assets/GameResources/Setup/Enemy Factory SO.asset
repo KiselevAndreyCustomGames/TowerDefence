@@ -12,14 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75ddf7e65ec2d204a89470118d8e3625, type: 3}
   m_Name: Enemy Factory SO
   m_EditorClassIdentifier: 
-  _baseEnemyPrefab: {fileID: 3560460766948335402, guid: 8976387b46399e74298d795071693ea2, type: 3}
-  _scale:
-    _min: 0.5
-    _max: 2
-  _scaleRange:
-    _min: 0
-    _max: 1
-  _speed:
-    _min: 1
-    _max: 2.5
-  _initHealth: 200
+  _large:
+    <Prefab>k__BackingField: {fileID: 3560460766948335402, guid: b128fe8592dcbdf419fc94a50d3d1c7b, type: 3}
+    _scale:
+      _min: 1
+      _max: 2
+    _speed:
+      _min: 0.1
+      _max: 0.5
+    _health:
+      _min: 150
+      _max: 250
+  _medium:
+    <Prefab>k__BackingField: {fileID: 3560460766948335402, guid: d620fbab4f88ff74c9247427e14f6517, type: 3}
+    _scale:
+      _min: 0.5
+      _max: 1
+    _speed:
+      _min: 0.5
+      _max: 1
+    _health:
+      _min: 50
+      _max: 150
+  _small:
+    <Prefab>k__BackingField: {fileID: 3560460766948335402, guid: 8976387b46399e74298d795071693ea2, type: 3}
+    _scale:
+      _min: 0.3
+      _max: 0.5
+    _speed:
+      _min: 1
+      _max: 2.5
+    _health:
+      _min: 10
+      _max: 50
