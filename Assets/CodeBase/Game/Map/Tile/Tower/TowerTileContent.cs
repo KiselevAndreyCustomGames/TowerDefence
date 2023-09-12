@@ -49,7 +49,8 @@ namespace CodeBase.Game.Map
             if (Target == null)
                 return false;
 
-            if(Vector3.Distance(Target.Position, transform.localPosition) > Range + Target.ColliderSize)
+            if(Vector3.Distance(Target.Position, transform.localPosition) > Range + Target.ColliderSize
+                || Target.Enemy.IsAlive == false)
             {
                 Target = null;
                 EndTargeting();

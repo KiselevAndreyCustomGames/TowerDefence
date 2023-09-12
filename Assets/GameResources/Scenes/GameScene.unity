@@ -563,9 +563,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemySpawner:
-    _enemyFactory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
-    _enemySpawnSpeed: 1
-    _enemyMaxCount: 1
+    _scenario: {fileID: 11400000, guid: 341d3af4b1ca1104a906ceb90356d370, type: 2}
   _map:
     _board:
       _ground: {fileID: 1020600127}

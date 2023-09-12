@@ -8,7 +8,7 @@ namespace CodeBase.Infrastructure.Game
     {
         [SerializeField] private EnemyConfig _large, _medium, _small;
 
-        public void Despawn(EnemyBehaviour content) =>
+        public static void Despawn(EnemyBehaviour content) =>
             Lean.Pool.LeanPool.Despawn(content);
 
         public EnemyBehaviour Spawn(EnemyType type) =>

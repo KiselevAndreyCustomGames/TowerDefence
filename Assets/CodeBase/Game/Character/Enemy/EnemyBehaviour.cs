@@ -14,6 +14,8 @@ namespace CodeBase.Game.Character.Enemy
 
         public float Scale {get; private set;}
 
+        public bool IsAlive => _health.IsAlive;
+
         public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPathOrDie, EnemySpawnParameters parameters)
         {
             _mover.Init(spawnTile, parameters.Speed);
