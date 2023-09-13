@@ -10,6 +10,7 @@ namespace CodeBase.Infrastructure.Game
         [SerializeField, FloatRangeSlider(0.3f, 2.5f)] private FloatRange _scale;
         [SerializeField, FloatRangeSlider(0.1f, 3f)] private FloatRange _speed;
         [SerializeField, FloatRangeSlider(10, 10000)] private FloatRange _health;
+        [SerializeField, Range(1, 10)] private int _damage;
 
         public EnemySpawnParameters GetRandomParameters()
         {
@@ -18,7 +19,7 @@ namespace CodeBase.Infrastructure.Game
             var speed = _speed.PercentageAt(1 - percentageOfGigantizm);
             var health = _health.PercentageAt(percentageOfGigantizm);
 
-            return new(scale, speed, health);
+            return new(scale, speed, health, _damage);
         }
     }
 }

@@ -10,18 +10,20 @@ namespace CodeBase.Game.Character.Enemy
 
         private EnemyMover _mover;
         private readonly HealthBehaviour _health = new();
-        private Action<EnemyBehaviour> _onEnemyEndedPathOrDie;
+        private Action<EnemyBehaviour, bool> _onEnemyEndedPathOrDie;
 
         public float Scale {get; private set;}
+        public int Damage {get; private set;}
 
         public bool IsAlive => _health.IsAlive;
 
-        public void Init(ITile spawnTile, Action<EnemyBehaviour> onEnemyEndedPathOrDie, EnemySpawnParameters parameters)
+        public void Init(ITile spawnTile, Action<EnemyBehaviour, bool> onEnemyEndedPathOrDie, EnemySpawnParameters parameters)
         {
             _mover.Init(spawnTile, parameters.Speed);
             _onEnemyEndedPathOrDie = onEnemyEndedPathOrDie;
             _model.localScale = Vector3.one * parameters.Scale;
             Scale = parameters.Scale;
+            Damage = parameters.Damage;
             _health.Init(parameters.Health);
         }
 
@@ -45,6 +47,11 @@ namespace CodeBase.Game.Character.Enemy
             _mover = new EnemyMover(transform, _model, OnPathEndedOrDie);
         }
 
+        private void OnDisable()
+        {
+            _health.Die();
+        }
+
         private void OnDrawGizmosSelected()
         {
             _mover?.OnDrawGizmosSelected();
@@ -52,7 +59,7 @@ namespace CodeBase.Game.Character.Enemy
 
         private void OnPathEndedOrDie()
         {
-            _onEnemyEndedPathOrDie?.Invoke(this);
+            _onEnemyEndedPathOrDie?.Invoke(this, IsAlive);
         }
     }
 }

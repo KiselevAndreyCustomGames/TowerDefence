@@ -11,6 +11,13 @@ namespace CodeBase.Game.Character.Enemy
         [SerializeField, Range(1, 100)] private int _amount = 3;
         [SerializeField, Range(0.1f, 10f)] private float _cooldown = 3f;
 
+        private EnemySpawnBehaviour _enemySpawnBehaviour;
+
+        public void Init(EnemySpawnBehaviour enemySpawnBehaviour)
+        {
+            _enemySpawnBehaviour = enemySpawnBehaviour;
+        }
+
         public State Begin() => new(this);
 
         [System.Serializable]
@@ -19,6 +26,8 @@ namespace CodeBase.Game.Character.Enemy
             private readonly EnemySpawnSequence _sequence;
             private int _count;
             private float _cooldown;
+
+            public bool IsSequenceEnd => _count >= _sequence._amount;
 
             public State(EnemySpawnSequence sequence)
             {
@@ -37,7 +46,7 @@ namespace CodeBase.Game.Character.Enemy
                         return _cooldown;
 
                     _count++;
-                    EnemySpawnBehaviour.SpawnEnemy(_sequence._factory, _sequence._type);
+                    _sequence._enemySpawnBehaviour.SpawnEnemy(_sequence._factory, _sequence._type);
                 }
 
                 return -1f;

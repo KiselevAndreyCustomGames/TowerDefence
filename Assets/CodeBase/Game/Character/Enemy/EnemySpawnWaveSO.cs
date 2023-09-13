@@ -7,6 +7,14 @@ namespace CodeBase.Game.Character.Enemy
     {
         [SerializeField] private EnemySpawnSequence[] _sequences;
 
+        public void Init(EnemySpawnBehaviour enemySpawnBehaviour)
+        {
+            foreach (var s in _sequences)
+            {
+                s.Init(enemySpawnBehaviour);
+            }
+        }
+
         public State Begin() => new(this);
 
         [System.Serializable]
@@ -15,6 +23,9 @@ namespace CodeBase.Game.Character.Enemy
             private readonly EnemySpawnWaveSO _wave;
             private EnemySpawnSequence.State _sequence;
             private int _index;
+
+            public bool IsWaveEnd => _index >= _wave._sequences.Length
+                && _sequence.IsSequenceEnd;
 
             public State(EnemySpawnWaveSO wave)
             {

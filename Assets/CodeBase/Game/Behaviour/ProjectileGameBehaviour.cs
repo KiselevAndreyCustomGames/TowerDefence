@@ -5,11 +5,21 @@ using UnityEngine;
 namespace CodeBase.Game
 {
     [System.Serializable]
-    public class ProjectileGameBehaviour : IShellSpawner
+    public class ProjectileGameBehaviour : IShellSpawner, IRestartable
     {
         private readonly GameCollection _collection = new();
 
         [SerializeField] private ProjectileFactorySO _factorySO;
+
+        public void Start()
+        {
+            _collection.Init(Despawn);
+        }
+
+        public void Restart()
+        {
+            _collection.Clear();
+        }
 
         public void GameUpdate()
         {
@@ -34,6 +44,9 @@ namespace CodeBase.Game
         {
             _factorySO.Despawn(projectile);
         }
+
+        private void Despawn(IPlayable projectile) =>
+            Despawn(projectile as Projectile);
     }
 
     public interface IProjectileSpawner

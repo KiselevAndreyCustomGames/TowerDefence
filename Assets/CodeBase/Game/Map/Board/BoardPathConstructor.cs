@@ -6,17 +6,19 @@ namespace CodeBase.Game.Map
 {
     public class BoardPathConstructor : IBoardConstructor
     {
-        private readonly Vector2Int _size;
-        private readonly Func<bool> UseAlternative;
         private readonly ITile[] _tiles;
-        private readonly Queue<ITile> _serchFrontier = new();
+        private readonly Vector2Int _size;
         private readonly LayerMask _boardMask;
+        private readonly Func<bool> _useAlternative;
+        private readonly Queue<ITile> _serchFrontier = new();
+        private readonly Action<ITile, TileType> _changeContent;
 
         public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, LayerMask boardMask, Action<ITile, TileType> changeContent, Func<bool> useAlternative)
         {
             _size = size;
             _boardMask = boardMask;
-            UseAlternative = useAlternative;
+            _useAlternative = useAlternative;
+            _changeContent = changeContent;
             _tiles = new ITile[size.x * size.y];
 
             var offset = new Vector2((size.x - 1) * 0.5f, (size.y - 1) * 0.5f);
@@ -42,7 +44,7 @@ namespace CodeBase.Game.Map
                 }
             }
 
-            changeContent(_tiles[(int)(_tiles.Length * 0.5f)], TileType.Destination);
+            SetDefaultDestination();
         }
 
         public ITile GetTile(Ray ray)
@@ -80,7 +82,7 @@ namespace CodeBase.Game.Map
                 var tile = _serchFrontier.Dequeue();
                 if (tile != null)
                 {
-                    if (tile.IsAlternative && UseAlternative())
+                    if (tile.IsAlternative && _useAlternative())
                     {
                         _serchFrontier.Enqueue(tile.GrowPathNorth());
                         _serchFrontier.Enqueue(tile.GrowPathSouth());
@@ -106,5 +108,16 @@ namespace CodeBase.Game.Map
 
             return true;
         }
+
+        public void Restart()
+        {
+            foreach (var tile in _tiles)
+                _changeContent(tile, TileType.Empty);
+
+            SetDefaultDestination();
+        }
+
+        private void SetDefaultDestination() =>
+            _changeContent(_tiles[(int)(_tiles.Length * 0.5f)], TileType.Destination);
     }
 }

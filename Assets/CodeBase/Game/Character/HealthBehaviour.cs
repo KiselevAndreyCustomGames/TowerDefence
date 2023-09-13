@@ -15,5 +15,10 @@
         {
             _health -= damage;
         }
+
+        public void Die()
+        {
+            _health = 0;
+        }
     }
 }

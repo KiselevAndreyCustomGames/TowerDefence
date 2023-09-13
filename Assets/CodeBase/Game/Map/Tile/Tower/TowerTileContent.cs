@@ -27,9 +27,10 @@ namespace CodeBase.Game.Map
 
         protected virtual void EndTargeting() { }
 
-        private void OnDisable()
+        protected override void OnDisabling()
         {
             _isUpdated = false;
+            Turret.localRotation = Quaternion.identity;
         }
 
         private bool IsAcquireTarget()

@@ -9,13 +9,13 @@ namespace CodeBase.Game.Map
         public void GameUpdate();
     }
 
-    public interface IBoardConstructor
+    public interface IBoardConstructor : IRestartable
     {
         public bool FindPaths();
         public ITile GetTile(Ray ray);
     }
 
-    public interface IBoardSwitcher
+    public interface IBoardSwitcher : IRestartable
     {
         public List<ITile> EnemySpawnTiles { get; }
         public void ToggleDestination(ITile tile);

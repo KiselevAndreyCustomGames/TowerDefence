@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CodeBase.Game
 {
     [System.Serializable]
-    public class MapBehaviour
+    public class MapBehaviour : IRestartable
     {
         [SerializeField] private Board _board;
         [Space]
@@ -29,7 +29,12 @@ namespace CodeBase.Game
             _board.FindPaths();
         }
 
-        public void GameUpdate()
+        public void Restart()
+        {
+            _board.Restart();
+        }
+
+        public void PlacementUpdate()
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
                 _towerType = TowerType.Laser;
@@ -40,7 +45,10 @@ namespace CodeBase.Game
                 HandleTouch();
             else if (Input.GetMouseButtonUp(1))
                 HandleAlternativeTouch();
+        }
 
+        public void GameUpdate()
+        {
             _board.GameUpdate();
         }
 

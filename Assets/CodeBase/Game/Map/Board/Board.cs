@@ -27,10 +27,23 @@ namespace CodeBase.Game.Map
         {
             _ground.localScale = new(size.x, size.y, 1f);
             _projectiles = projectiles;
+            _towers.Init(Despawn);
 
             _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _boardMask, ChangeTileContent, UseAlternative);
             _switcher = new BoardSwitcher(FindPaths, ChangeTileContent, ChangeTowerContent);
         }
+
+        public void Restart()
+        {
+            _constructor.Restart();
+            _switcher.Restart();
+            _projectiles.Restart();
+
+            _towers.Clear();
+
+            FindPaths();
+        }
+
         public void GameUpdate() => _towers.GameUpdate();
 
         public bool FindPaths() => _constructor.FindPaths();
@@ -41,7 +54,7 @@ namespace CodeBase.Game.Map
         public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
         public void ToggleTower(ITile tile, TowerType towerType) => _switcher.ToggleTower(tile, towerType);
 
-        private void ChangeTileContent(ITile tile, TileType newType) => ChangeContent(tile, _tileContentFactory.Spawn(newType));
+        private  void ChangeTileContent(ITile tile, TileType newType) => ChangeContent(tile, _tileContentFactory.Spawn(newType));
         private void ChangeTowerContent(ITile tile, TowerType newType)
         {
             var tower = _tileContentFactory.Spawn(newType);
@@ -63,5 +76,12 @@ namespace CodeBase.Game.Map
         }
 
         private bool UseAlternative() => _useAlternative;
+
+        private void Despawn(IPlayable playable)
+        {
+            var tile = playable as Tile;
+            if(tile != null)
+                ChangeContent(tile, _tileContentFactory.Spawn(TileType.Empty));
+        }
     }
 }

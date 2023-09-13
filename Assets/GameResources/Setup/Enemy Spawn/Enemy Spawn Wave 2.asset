@@ -16,12 +16,12 @@ MonoBehaviour:
   - _factory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
     _type: 2
     _amount: 3
-    _cooldown: 1
+    _cooldown: 0.2
   - _factory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
     _type: 1
     _amount: 5
-    _cooldown: 1.5
+    _cooldown: 0.2
   - _factory: {fileID: 11400000, guid: 195bd044b8e51344bb2bc706814a7758, type: 2}
-    _type: 0
+    _type: 2
     _amount: 2
     _cooldown: 2

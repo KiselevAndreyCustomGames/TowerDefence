@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace CodeBase.Game.Character.Enemy
@@ -7,6 +8,14 @@ namespace CodeBase.Game.Character.Enemy
     {
         [SerializeField] private EnemySpawnWaveSO[] _waves;
 
+        public void Init(EnemySpawnBehaviour enemySpawnBehaviour)
+        {
+            foreach (var w in _waves)
+            {
+                w.Init(enemySpawnBehaviour);
+            }
+        }
+
         public State Begin() => new(this);
 
         [System.Serializable]
@@ -15,6 +24,9 @@ namespace CodeBase.Game.Character.Enemy
             private readonly GameEnemySpawnScenarioSO _scenario;
             private EnemySpawnWaveSO.State _wave;
             private int _index;
+
+            public bool IsWaveEnd => _index >= _scenario._waves.Length
+                && _wave.IsWaveEnd;
 
             public State(GameEnemySpawnScenarioSO wave)
             {

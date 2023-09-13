@@ -23,6 +23,7 @@ MonoBehaviour:
     _health:
       _min: 150
       _max: 250
+    _damage: 5
   _medium:
     <Prefab>k__BackingField: {fileID: 3560460766948335402, guid: d620fbab4f88ff74c9247427e14f6517, type: 3}
     _scale:
@@ -34,6 +35,7 @@ MonoBehaviour:
     _health:
       _min: 50
       _max: 150
+    _damage: 3
   _small:
     <Prefab>k__BackingField: {fileID: 3560460766948335402, guid: 8976387b46399e74298d795071693ea2, type: 3}
     _scale:
@@ -45,3 +47,4 @@ MonoBehaviour:
     _health:
       _min: 10
       _max: 50
+    _damage: 1

@@ -19,6 +19,11 @@ namespace CodeBase.Game.Map
             ChangeTowerContent = changeTowerContent;
         }
 
+        public void Restart()
+        {
+            _enemySpawnTiles.Clear();
+        }
+
         public void ToggleDestination(ITile tile)
         {
             var currentContentType = tile.Content.Type;

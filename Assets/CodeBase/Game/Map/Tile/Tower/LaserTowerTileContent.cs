@@ -24,6 +24,13 @@ namespace CodeBase.Game.Map
             _laserBeamScale = _laserBeam.localScale;
         }
 
+        protected override void OnDisabling()
+        {
+            base.OnDisabling();
+
+            EndTargeting();
+        }
+
         protected override void EndTargeting()
         {
             _laserBeam.localScale = Vector3.zero;

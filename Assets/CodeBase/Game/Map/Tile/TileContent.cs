@@ -10,10 +10,16 @@ namespace CodeBase.Game.Map
         public bool IsBlockingPath => Type == TileType.Wall || Type == TileType.Tower;
 
         protected virtual void OnAwake() { }
+        protected virtual void OnDisabling() { }
 
         private void Awake()
         {
             OnAwake();
+        }
+
+        private void OnDisable()
+        {
+            OnDisabling();
         }
     }
 }
