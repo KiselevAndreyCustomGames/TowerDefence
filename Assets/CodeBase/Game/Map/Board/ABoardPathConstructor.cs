@@ -37,10 +37,6 @@ namespace CodeBase.Game.Map
                     if (y > 0)
                         tile.MakeSouthNeibour(Tiles[i - size.x]);
 
-                    tile.IsAlternative = (x & 1) == 0;
-                    if ((y & 1) == 0)
-                        tile.IsAlternative = !tile.IsAlternative;
-
                     changeContent(tile, TileType.Empty);
                 }
             }
@@ -77,6 +73,8 @@ namespace CodeBase.Game.Map
         {
             foreach (var tile in Tiles)
                 _changeContent(tile, TileType.Empty);
+
+            Paths.Clear();
 
             SetDefaultDestination();
         }

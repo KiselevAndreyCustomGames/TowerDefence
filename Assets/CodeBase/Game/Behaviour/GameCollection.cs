@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CodeBase.Game
 {
-    [System.Serializable]
+    [Serializable]
     public class GameCollection
     {
         private readonly List<IPlayable> _behaviors = new();

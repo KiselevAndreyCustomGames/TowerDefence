@@ -30,6 +30,7 @@ namespace CodeBase.Game.Map
             _towers.Init(Despawn);
 
             _constructor = new BoardPathConstructor(size, _tileParent, _tilePrefab, _boardMask, ChangeTileContent, UseAlternative);
+            //_constructor = new BoardPathConstructorAStar(size, _tileParent, _tilePrefab, _boardMask, ChangeTileContent, UseAlternative);
             _switcher = new BoardSwitcher(FindPaths, ChangeTileContent, ChangeTowerContent);
         }
 

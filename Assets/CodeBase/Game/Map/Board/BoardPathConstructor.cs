@@ -8,9 +8,20 @@ namespace CodeBase.Game.Map
     {
         private readonly Queue<ITile> _serchFrontier = new();
 
-        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, LayerMask boardMask, Action<ITile, TileType> changeContent, Func<bool> useAlternative) 
+        public BoardPathConstructor(Vector2Int size, Transform tileParent, Tile tilePrefab, LayerMask boardMask, Action<ITile, TileType> changeContent, Func<bool> useAlternative)
             : base(size, tileParent, tilePrefab, boardMask, changeContent, useAlternative)
         {
+            for (int i = 0, y = 0; y < size.y; y++)
+            {
+                for (int x = 0; x < size.x; x++, i++)
+                {
+                    var tile = Tiles[x + y];
+
+                    tile.IsAlternative = (x & 1) == 0;
+                    if ((y & 1) == 0)
+                        tile.IsAlternative = !tile.IsAlternative;
+                }
+            }
         }
 
         public override bool FindPaths()
@@ -73,6 +84,8 @@ namespace CodeBase.Game.Map
                 var pathFinder = new PathFinder();
                 Paths.Add(tile, pathFinder);
             }
+
+            FindPaths();
         }
     }
 
