@@ -17,7 +17,7 @@ namespace CodeBase.Game.Projectiles
 
         private float _scale;
 
-        private static readonly int _colorPropId = Shader.PropertyToID("_BaseColor");
+        private static readonly int COLOR_PROP_ID = Shader.PropertyToID("_BaseColor");
 
         public void Init(Vector3 position, float radius, float damage, Action<Projectile> despawn)
         {
@@ -49,7 +49,7 @@ namespace CodeBase.Game.Projectiles
 
             float t = Age / _duration;
             _color.a = _colorCurve.Evaluate(t);
-            _propertyBlock.SetColor(_colorPropId, _color);
+            _propertyBlock.SetColor(COLOR_PROP_ID, _color);
             _meshRenderer.SetPropertyBlock(_propertyBlock);
 
             transform.localScale = Vector3.one * (_scale * _scaleCurve.Evaluate(t));
@@ -59,7 +59,7 @@ namespace CodeBase.Game.Projectiles
 
         protected override void OnAwake()
         {
-            _meshRenderer = GetComponent<MeshRenderer>();
+            _meshRenderer = GetComponentInChildren<MeshRenderer>();
             _propertyBlock = new MaterialPropertyBlock();
         }
     }

@@ -10,9 +10,10 @@ namespace CodeBase.Game.Map
         [SerializeField, Range(1, 100)] protected float Damage = 1.5f;
         [SerializeField] protected Transform Turret;
 
-        protected  EnemyTarger Target;
+        protected EnemyTarger Target;
 
         private bool _isUpdated = true;
+        private Quaternion _startTurretRotation;
 
         public abstract TowerType TowerType { get; }
 
@@ -27,10 +28,19 @@ namespace CodeBase.Game.Map
 
         protected virtual void EndTargeting() { }
 
+        protected override void OnAwake()
+        {
+            base.OnAwake();
+
+            _startTurretRotation = Turret.localRotation;
+        }
+
         protected override void OnDisabling()
         {
+            base.OnDisabling();
+
             _isUpdated = false;
-            Turret.localRotation = Quaternion.identity;
+            Turret.localRotation = _startTurretRotation;
         }
 
         private bool IsAcquireTarget()

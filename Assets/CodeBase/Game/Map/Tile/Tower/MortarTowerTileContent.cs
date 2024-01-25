@@ -5,6 +5,8 @@ namespace CodeBase.Game.Map
 {
     public class MortarTowerTileContent : TowerTileContent
     {
+        [SerializeField] private Transform _mortarBase;
+        [SerializeField] private Transform _shellSpawnPoint;
         [SerializeField, Range(0.5f, 2f)] private float _shootsPesSeconds = 1f;
         [SerializeField, Range(0.5f, 3f)] private float _shellBlastRadius = 1f;
 
@@ -47,15 +49,17 @@ namespace CodeBase.Game.Map
         private void OnValidate()
         {
             var x = Range + 0.251f;
-            var y = -Turret.position.y;
+            var y = -_shellSpawnPoint.position.y;
             _launchSpeed = Mathf.Sqrt(g * (y + Mathf.Sqrt(x * x + y * y)));
         }
 
         private void LookAtTarget()
         {
-            Vector3 launchPoint = Turret.position;
+            Vector3 launchPoint = _shellSpawnPoint.position;
             Vector3 targetPoint = Target.Position;
             targetPoint.y = 0f;
+
+            _mortarBase.LookAt(new Vector3(targetPoint.x, _mortarBase.position.y, targetPoint.z));
 
             Vector3 dir;
             dir.x = targetPoint.x - launchPoint.x;
@@ -84,7 +88,7 @@ namespace CodeBase.Game.Map
                 _shellLaunchVelocity.y = s * sinTheta;
                 _shellLaunchVelocity.z = s * cosTheta * dir.z;
 
-                _projectiles.SpawnShell().Init(launchPoint, targetPoint,
+                _projectiles.SpawnShell().Init(_shellSpawnPoint.position, targetPoint,
                     new Vector3(s * cosTheta * dir.x, s * sinTheta, s * cosTheta * dir.z),
                     _projectiles.Despawn, _projectiles.SpawnExplosion,
                     _shellBlastRadius, Damage);
