@@ -6,7 +6,8 @@ namespace CodeBase.Game
     [Serializable ]
     public class GameWinFallBehaviour : IRestartable
     {
-        [SerializeField, Range(1, 10)] private int _maxLives;
+        [SerializeField, Range(1, 100)] private int _maxLives;
+        [SerializeField] private bool _isImmortal;
 
         private int _currentLives;
 
@@ -26,7 +27,7 @@ namespace CodeBase.Game
         {
             _currentLives -= damage;
 
-            if (_currentLives <= 0)
+            if (_isImmortal == false && _currentLives <= 0)
                 Fall();
         }
 

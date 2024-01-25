@@ -51,6 +51,8 @@ namespace CodeBase.Game
                 _isWave = !_isWave;
             else if (Input.GetKeyUp(KeyCode.R))
                 Restart();
+            else if (Input.GetKeyUp(KeyCode.T))
+                NewTurn();
         }
 
         private void GameUpdate()
@@ -81,10 +83,19 @@ namespace CodeBase.Game
             _isWave = false;
         }
 
+        private void NewTurn()
+        {
+            _enemySpawner.Restart();
+            _winFall.Restart();
+
+            _isPlaing = true;
+            _isWave = false;
+        }
+
         private void EndGame()
         {
             _isPlaing = false;
-            
+            _isWave = false;
         }
     }
 }
