@@ -5,11 +5,25 @@ using UnityEngine;
 
 namespace CodeBase.Game.Character.Enemy
 {
-    public class EnemyMover
+    public class EnemyMover : AEnemyMover
     {
-        private readonly Transform _transform;
+        public EnemyMover(Transform transform, Transform model, Action onPathEnded) 
+            : base(transform, model, onPathEnded)
+        {
+        }
+
+        public void Init(ITile spawnTile, float speed)
+        {
+            Speed = speed;
+            SpawnOn(spawnTile);
+            Progress = 0;
+        }
+
+    }
+
+    public abstract class AEnemyMover
+    {
         private readonly Transform _model;
-        private readonly Action _onPathEnded;
         private readonly float _invertedQuarterPI = 1 / (MathF.PI * 0.25f);
 
         private Vector3 _positionFrom, _positionTo;
@@ -18,45 +32,42 @@ namespace CodeBase.Game.Character.Enemy
         private DirectionChange _directionChange;
 
         private float _directionAngleFrom, _directionAngleTo;
-        private float _progress, _progressFactor;
-        private float _speed;
 
-        public EnemyMover(Transform transform, Transform model, Action onPathEnded)
+        protected readonly Transform Transform;
+        protected readonly Action OnPathEnded;
+
+        protected float Progress, ProgressFactor;
+        protected float Speed;
+
+        public AEnemyMover(Transform transform, Transform model, Action onPathEnded)
         {
-            _transform = transform;
+            Transform = transform;
             _model = model;
-            _onPathEnded = onPathEnded;
-        }
-
-        public void Init(ITile spawnTile, float speed)
-        {
-            _speed = speed;
-            SpawnOn(spawnTile);
-            _progress = 0;
+            OnPathEnded = onPathEnded;
         }
 
         public bool Update()
         {
-            _progress += Time.deltaTime * _progressFactor;
-            while (_progress >= 1)
+            Progress += Time.deltaTime * ProgressFactor;
+            while (Progress >= 1)
             {
                 if (_tileTo == null)
                 {
-                    _onPathEnded();
+                    OnPathEnded.Invoke();
                     return false;
                 }
-                _progress = (_progress - 1) / _progressFactor;
+                Progress = (Progress - 1) / ProgressFactor;
                 PrepareNextState();
-                _progress *= _progressFactor;
+                Progress *= ProgressFactor;
             }
 
             if (_directionChange != DirectionChange.None)
             {
-                var angle = Mathf.LerpUnclamped(_directionAngleFrom, _directionAngleTo, _progress);
-                _transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+                var angle = Mathf.LerpUnclamped(_directionAngleFrom, _directionAngleTo, Progress);
+                Transform.localRotation = Quaternion.Euler(0f, angle, 0f);
             }
             else
-                _transform.localPosition = Vector3.LerpUnclamped(_positionFrom, _positionTo, _progress);
+                Transform.localPosition = Vector3.LerpUnclamped(_positionFrom, _positionTo, Progress);
 
             return true;
         }
@@ -69,7 +80,7 @@ namespace CodeBase.Game.Character.Enemy
             Gizmos.DrawSphere(_positionFrom, 0.1f);
         }
 
-        private void SpawnOn(ITile spawnTile)
+        protected void SpawnOn(ITile spawnTile)
         {
             _tileFrom = spawnTile;
             _tileTo = spawnTile.NextTileOnPath;
@@ -79,15 +90,15 @@ namespace CodeBase.Game.Character.Enemy
             _directionChange = DirectionChange.None;
             PrepareForward();
             _directionAngleFrom = _directionAngleTo;
-            _progressFactor = 2f * _speed;
+            ProgressFactor = 2f * Speed;
         }
 
-        private void PrepareNextState()
+        protected void PrepareNextState()
         {
             _tileFrom = _tileTo;
             _tileTo = _tileFrom.NextTileOnPath;
             _positionFrom = _positionTo;
-            if(_tileTo == null)
+            if (_tileTo == null)
             {
                 PrepareFinish();
                 return;
@@ -116,34 +127,34 @@ namespace CodeBase.Game.Character.Enemy
 
         private void PrepareForward()
         {
-            _transform.SetLocalPositionAndRotation(_positionFrom, _direction.GetRotation());
+            Transform.SetLocalPositionAndRotation(_positionFrom, _direction.GetRotation());
             _directionAngleTo = _direction.GetAngle();
             _model.localPosition = Vector3.zero;
-            _progressFactor = _speed;
+            ProgressFactor = Speed;
         }
 
         private void PrepareTurnLeft()
         {
             _directionAngleTo = _directionAngleFrom - 90f;
             _model.localPosition = new Vector3(0.5f, 0f);
-            _transform.localPosition = _positionFrom + _direction.GetHalfVector();
-            _progressFactor = _speed * _invertedQuarterPI;
+            Transform.localPosition = _positionFrom + _direction.GetHalfVector();
+            ProgressFactor = Speed * _invertedQuarterPI;
         }
 
         private void PrepareTurnRight()
         {
             _directionAngleTo = _directionAngleFrom + 90f;
             _model.localPosition = new Vector3(-0.5f, 0f);
-            _transform.localPosition = _positionFrom + _direction.GetHalfVector();
-            _progressFactor = _speed * _invertedQuarterPI;
+            Transform.localPosition = _positionFrom + _direction.GetHalfVector();
+            ProgressFactor = Speed * _invertedQuarterPI;
         }
 
         private void PrepareTurnAround()
         {
             _directionAngleTo = _directionAngleFrom + 180;
             _model.localPosition = Vector3.zero;
-            _transform.localPosition = _positionFrom;
-            _progressFactor = 2f * _speed;
+            Transform.localPosition = _positionFrom;
+            ProgressFactor = 2f * Speed;
         }
 
         private void PrepareFinish()
@@ -152,8 +163,8 @@ namespace CodeBase.Game.Character.Enemy
             _directionChange = DirectionChange.None;
             _directionAngleTo = _direction.GetAngle();
             _model.localPosition = Vector3.zero;
-            _transform.localRotation = _direction.GetRotation();
-            _progressFactor = 2f * _speed;
+            Transform.localRotation = _direction.GetRotation();
+            ProgressFactor = 2f * Speed;
         }
     }
 }

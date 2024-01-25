@@ -13,6 +13,7 @@ namespace CodeBase.Game.Map
     {
         public bool FindPaths();
         public ITile GetTile(Ray ray);
+        public void ToggleEnemySpawnPoint(ITile tile);
     }
 
     public interface IBoardSwitcher : IRestartable

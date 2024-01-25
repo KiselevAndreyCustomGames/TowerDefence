@@ -48,6 +48,7 @@ namespace CodeBase.Game.Map
         {
             _distance = int.MaxValue;
             _nextOnPath = null;
+            _arrow.gameObject.SetActive(false);
         }
 
         public void BecameDestination()

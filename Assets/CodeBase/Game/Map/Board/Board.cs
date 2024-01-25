@@ -51,7 +51,12 @@ namespace CodeBase.Game.Map
 
         public void ToggleDestination(ITile tile) => _switcher.ToggleDestination(tile);
         public void ToggleWall(ITile tile) => _switcher.ToggleWall(tile);
-        public void ToggleEnemySpawnPoint(ITile tile) => _switcher.ToggleEnemySpawnPoint(tile);
+        public void ToggleEnemySpawnPoint(ITile tile)
+        {
+            _constructor.ToggleEnemySpawnPoint(tile);
+            _switcher.ToggleEnemySpawnPoint(tile);
+        }
+
         public void ToggleTower(ITile tile, TowerType towerType) => _switcher.ToggleTower(tile, towerType);
 
         private  void ChangeTileContent(ITile tile, TileType newType) => ChangeContent(tile, _tileContentFactory.Spawn(newType));
