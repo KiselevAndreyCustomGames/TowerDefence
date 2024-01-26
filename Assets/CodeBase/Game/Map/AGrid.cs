@@ -1,48 +1,55 @@
-﻿using CodeBase.Utility;
+﻿using System;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace CodeBase
 {
-    public abstract class AGrid
+    public abstract class AGrid<TGridObject>
     {
-        protected readonly int width;
-        protected readonly int height;
-        protected readonly float cellSize;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public float CellSize { get; private set; }
 
-        protected readonly Vector3 originPosition;
+        public Vector3 OriginPosition { get; private set; }
 
-        protected readonly int[,] gridArray;
-        protected readonly TextMesh[,] debugTextArray;
+        protected readonly TGridObject[,] gridArray;
 
-        public AGrid(int width, int height, float cellSize, Vector3 originPosition)
+        public Action<int, int, TGridObject> GridObjectChanged;
+
+        public AGrid(int width, int height, float cellSize, Vector3 originPosition, Func<TGridObject> createGridObject)
         {
-            this.width = width;
-            this.height = height;
-            this.cellSize = cellSize;
-            this.originPosition = originPosition;
+            Width = width;
+            Height = height;
+            CellSize = cellSize;
+            OriginPosition = originPosition;
 
-            gridArray = new int[width, height];
-            debugTextArray = new TextMesh[width, height];
+            gridArray = new TGridObject[width, height];
 
-            ShowGrid();
-        }
-
-        public void SetValue(int x, int y, int value)
-        {
-            if(InGrid(x, y))
+            for (int x = 0; x < Width; x++)
             {
-                gridArray[x, y] = value;
-                debugTextArray[x, y].text = value.ToString();
+                for (int y = 0; y < Height; y++)
+                {
+                    gridArray[x, y] = createGridObject();
+                }
             }
         }
 
-        public void SetValue(Vector3 worldPosition, int value)
+        public void SetGridObject(int x, int y, TGridObject gridObject)
         {
-            GetXY(worldPosition, out int x, out int y);
-            SetValue(x, y, value);
+            if(InGrid(x, y))
+            {
+                gridArray[x, y] = gridObject;
+                GridObjectChanged?.Invoke(x, y, gridObject);
+            }
         }
 
-        public int GetValue(int x, int y)
+        public void SetGridObject(Vector3 worldPosition, TGridObject gridObject)
+        {
+            GetXY(worldPosition, out int x, out int y);
+            SetGridObject(x, y, gridObject);
+        }
+
+        public TGridObject GetGridObject(int x, int y)
         {
             if(InGrid(x, y))
             {
@@ -51,48 +58,32 @@ namespace CodeBase
             return default;
         }
 
-        public int GetValue(Vector3 worldPosition)
+        public TGridObject GetGridObject(Vector3 worldPosition)
         {
             GetXY(worldPosition, out int x, out int y);
-            return GetValue(x, y);
+            return GetGridObject(x, y);
         }
 
-        protected virtual Vector3 GetWorldPosition(int x, int y)
+        public virtual Vector3 GetWorldPosition(int x, int y)
         {
-            return new Vector3(x, y) * cellSize + originPosition;
+            return new Vector3(x, y) * CellSize + OriginPosition;
         }
 
         protected virtual void GetXY(Vector3 worldPosition, out int x, out int y)
         {
-            worldPosition -= originPosition;
-            x = Mathf.FloorToInt(worldPosition.x / cellSize);
-            y = Mathf.FloorToInt(worldPosition.y / cellSize);
-        }
-
-        protected virtual void ShowGrid()
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    debugTextArray[x,y] = UtilsClass.CreateWorldText($"{x}, {y}", null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f, default, (int)(cellSize * 2f));
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
-                }
-            }
-
-            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 1f);
-            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 1f);
+            worldPosition -= OriginPosition;
+            x = Mathf.FloorToInt(worldPosition.x / CellSize);
+            y = Mathf.FloorToInt(worldPosition.y / CellSize);
         }
 
         protected bool OutOfGrid(int x, int y)
         {
-            return x < 0 || y < 0 || x >= width || y >= height;
+            return x < 0 || y < 0 || x >= Width || y >= Height;
         }
 
         protected bool InGrid(int x, int y)
         {
-            return x >= 0 && y >= 0 && x < width && y < height;
+            return x >= 0 && y >= 0 && x < Width && y < Height;
         }
     }
 }
