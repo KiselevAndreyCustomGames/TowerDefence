@@ -23,10 +23,10 @@ public class Pathfinding {
     public static Pathfinding Instance { get; private set; }
 
     private Grid<PathNode> grid;
-    private List<PathNode> openList;
-    private List<PathNode> closedList;
+    private IPathFindDataBase<PathNode> openNodes;
+    private List<PathNode> closedNodes;
 
-    public Pathfinding(int width, int height) {
+    public Pathfinding(int width, int height, IPathFindDataBase<PathNode> changable) {
         Instance = this;
         grid = new Grid<PathNode>(width, height, 10f, Vector3.zero, (Grid<PathNode> g, int x, int y) => new PathNode(g, x, y));
         for (int x = 0; x < width; x++)
@@ -36,17 +36,19 @@ public class Pathfinding {
                 GetNode(x, y).Neibours = GetNeighbourList(GetNode(x, y));
             }
         }
+
+        openNodes = changable;
     }
 
     public Grid<PathNode> GetGrid() {
         return grid;
     }
 
-    public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition, bool useSimpleSearchClosestNode) {
+    public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition) {
         grid.GetXY(startWorldPosition, out int startX, out int startY);
         grid.GetXY(endWorldPosition, out int endX, out int endY);
 
-        List<PathNode> path = FindPath(startX, startY, endX, endY, useSimpleSearchClosestNode);
+        List<PathNode> path = FindPath(startX, startY, endX, endY);
         if (path == null) {
             return null;
         } else {
@@ -58,7 +60,7 @@ public class Pathfinding {
         }
     }
 
-    public List<PathNode> FindPath(int startX, int startY, int endX, int endY, bool useSimpleSearchClosestNode) {
+    public List<PathNode> FindPath(int startX, int startY, int endX, int endY) {
         PathNode startNode = grid.GetGridObject(startX, startY);
         PathNode endNode = grid.GetGridObject(endX, endY);
 
@@ -67,8 +69,10 @@ public class Pathfinding {
             return null;
         }
 
-        openList = new List<PathNode> { startNode };
-        closedList = new List<PathNode>();
+        openNodes.Clear();
+        openNodes.Add(startNode);
+        closedNodes = new List<PathNode>();
+        Debug.Log($"+ {startNode}\n{openNodes}");
 
         for (int x = 0; x < grid.GetWidth(); x++) {
             for (int y = 0; y < grid.GetHeight(); y++) {
@@ -83,42 +87,47 @@ public class Pathfinding {
         startNode.hCost = CalculateDistanceCost(startNode, endNode);
         startNode.CalculateFCost();
         
-        PathfindingDebugStepVisual.Instance.ClearSnapshots();
-        PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, startNode, openList, closedList);
+        //PathfindingDebugStepVisual.Instance.ClearSnapshots();
+        //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, startNode, openNodes, closedNodes);
 
-        while (openList.Count > 0) {
-            PathNode currentNode = GetLowestFCostNode(openList, useSimpleSearchClosestNode);
+        while (openNodes.IsEmpty() == false) {
+            PathNode currentNode = openNodes.GetLowest();
             if (currentNode == endNode) {
                 // Reached final node
-                PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openList, closedList);
+                //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openNodes, closedNodes);
                 var path = CalculatePath(endNode);
-                PathfindingDebugStepVisual.Instance.TakeSnapshotFinalPath(grid, path);
-                Debug.Log($"{PathfindingDebugStepVisual.Instance.GetSnapshotsCount()}");
+                //PathfindingDebugStepVisual.Instance.TakeSnapshotFinalPath(grid, path);
+                Debug.Log($"{path.Count}");
                 return path;
             }
 
-            openList.Remove(currentNode);
-            closedList.Add(currentNode);
+            openNodes.Remove(currentNode);
+            closedNodes.Add(currentNode);
+            Debug.Log($"- {currentNode}\n{openNodes}");
 
             foreach (PathNode neighbourNode in currentNode.Neibours) {
-                if (closedList.Contains(neighbourNode)) continue;
+                if (closedNodes.Contains(neighbourNode)) continue;
                 if (!neighbourNode.isWalkable) {
-                    closedList.Add(neighbourNode);
+                    closedNodes.Add(neighbourNode);
                     continue;
                 }
 
                 int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
-                if (tentativeGCost < neighbourNode.gCost) {
+                if (tentativeGCost < neighbourNode.gCost)
+                {
+                    if (openNodes.Contains(neighbourNode))
+                    {
+                        openNodes.Remove(neighbourNode);
+                        Debug.Log($"- {neighbourNode}\n{openNodes}");
+                    }
                     neighbourNode.cameFromNode = currentNode;
                     neighbourNode.gCost = tentativeGCost;
                     neighbourNode.hCost = CalculateDistanceCost(neighbourNode, endNode);
                     neighbourNode.CalculateFCost();
-
-                    if (!openList.Contains(neighbourNode)) {
-                        openList.Add(neighbourNode);
-                    }
+                    openNodes.Add(neighbourNode);
+                    Debug.Log($"+ {neighbourNode}\n{openNodes}");
                 }
-                PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openList, closedList);
+                //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openNodes, closedNodes);
             }
         }
 
@@ -178,19 +187,25 @@ public class Pathfinding {
         return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
     }
 
-    private PathNode GetLowestFCostNode(List<PathNode> pathNodeList, bool useSimpleSearchClosestNode) {
-        PathNode lowestFCostNode = pathNodeList[0];
-        for (int i = 1; i < pathNodeList.Count; i++)
-        {
-            bool isNewLowestFCostNode = useSimpleSearchClosestNode ?
-                pathNodeList[i].fCost < lowestFCostNode.fCost :
-                pathNodeList[i].fCost < lowestFCostNode.fCost || (pathNodeList[i].fCost == lowestFCostNode.fCost && pathNodeList[i].hCost < lowestFCostNode.hCost);
-            if (isNewLowestFCostNode)
-            {
-                lowestFCostNode = pathNodeList[i];
-            }
-        }
-        return lowestFCostNode;
-    }
+    //private PathNode GetLowestFCostNode(IPathFindData<PathNode> pathNodeList) {
+    //    var lowestFCostTreeNode = pathNodeList.RootNode;
+
+    //    while (lowestFCostTreeNode.LeftNode != null)
+    //    {
+    //        lowestFCostTreeNode = lowestFCostTreeNode.LeftNode;
+    //    }
+    //    //for (int i = 1; i < pathNodeList.Count; i++)
+    //    //{
+    //    //    bool isNewLowestFCostNode = useSimpleSearchClosestNode ?
+    //    //        pathNodeList[i].fCost < lowestFCostNode.fCost :
+    //    //        pathNodeList[i] < lowestFCostNode;
+    //    //        //pathNodeList[i].fCost < lowestFCostNode.fCost || (pathNodeList[i].fCost == lowestFCostNode.fCost && pathNodeList[i].hCost < lowestFCostNode.hCost);
+    //    //    if (isNewLowestFCostNode)
+    //    //    {
+    //    //        lowestFCostNode = pathNodeList[i];
+    //    //    }
+    //    //}
+    //    return lowestFCostTreeNode.Data;
+    //}
 
 }

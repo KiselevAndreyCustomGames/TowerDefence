@@ -8,4 +8,9 @@ public class GridXZDebugger<TGridObject> : AGridDebugger<TGridObject>
     public GridXZDebugger(AGrid<TGridObject> grid) : base(grid)
     {
     }
+
+    protected override Vector3 CellLocalCenter()
+    {
+        return new Vector3(grid.CellSize, 0, grid.CellSize) * 0.5f;
+    }
 }

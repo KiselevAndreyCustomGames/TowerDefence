@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace CodeBase
 {
@@ -14,9 +13,22 @@ namespace CodeBase
 
         protected readonly TGridObject[,] gridArray;
 
-        public Action<int, int, TGridObject> GridObjectChanged;
+        public Action<OnGridChangedArg> GridObjectChanged;
 
-        public AGrid(int width, int height, float cellSize, Vector3 originPosition, Func<TGridObject> createGridObject)
+        public struct OnGridChangedArg
+        {
+            public int X, Y;
+            public TGridObject GridObject;
+
+            public OnGridChangedArg(int x, int y, TGridObject gridObject)
+            {
+                X = x;
+                Y = y;
+                GridObject = gridObject;
+            }
+        }
+
+        public AGrid(int width, int height, float cellSize, Vector3 originPosition, Func<int, int, TGridObject> createGridObject)
         {
             Width = width;
             Height = height;
@@ -29,8 +41,16 @@ namespace CodeBase
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    gridArray[x, y] = createGridObject();
+                    gridArray[x, y] = createGridObject(x, y);
                 }
+            }
+        }
+
+        public void TriggerGridObjectChanged(int x, int y)
+        {
+            if(InGrid(x, y))
+            {
+                GridObjectChanged?.Invoke(new OnGridChangedArg(x, y, gridArray[x, y]));
             }
         }
 
@@ -39,7 +59,7 @@ namespace CodeBase
             if(InGrid(x, y))
             {
                 gridArray[x, y] = gridObject;
-                GridObjectChanged?.Invoke(x, y, gridObject);
+                GridObjectChanged?.Invoke(new OnGridChangedArg(x, y, gridObject));
             }
         }
 
@@ -86,4 +106,5 @@ namespace CodeBase
             return x >= 0 && y >= 0 && x < Width && y < Height;
         }
     }
+
 }

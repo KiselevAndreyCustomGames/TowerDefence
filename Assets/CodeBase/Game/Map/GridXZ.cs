@@ -7,7 +7,7 @@ namespace CodeBase
     {
         public float YPosition { get; private set; }
 
-        public GridXZ(int width, int height, float cellSize, Vector3 originPosition, Func<TGridObject> createGridObject, float yPosition = 0) 
+        public GridXZ(int width, int height, float cellSize, Vector3 originPosition, Func<int, int, TGridObject> createGridObject, float yPosition = 0) 
             : base (width, height, cellSize, originPosition, createGridObject)
         {
             YPosition = yPosition;

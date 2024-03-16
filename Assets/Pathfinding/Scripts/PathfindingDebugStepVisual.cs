@@ -83,7 +83,7 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
         gridSnapshotActionList.Clear();
     }
 
-    public void TakeSnapshot(Grid<PathNode> grid, PathNode current, List<PathNode> openList, List<PathNode> closedList) {
+    public void TakeSnapshot(Grid<PathNode> grid, PathNode current, IPathFindData<PathNode> nodeList, List<PathNode> closedList) {
         GridSnapshotAction gridSnapshotAction = new GridSnapshotAction();
         gridSnapshotAction.AddAction(HideNodeVisuals);
         
@@ -96,7 +96,7 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
                 int fCost = pathNode.fCost;
                 Vector3 gridPosition = new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f;
                 bool isCurrent = pathNode == current;
-                bool isInOpenList = openList.Contains(pathNode);
+                bool isInOpenList = nodeList.Contains(pathNode);
                 bool isInClosedList = closedList.Contains(pathNode);
                 int tmpX = x;
                 int tmpY = y;
