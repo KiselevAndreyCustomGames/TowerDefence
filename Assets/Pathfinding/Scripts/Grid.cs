@@ -88,17 +88,16 @@ public class Grid<TGridObject> {
     public void SetGridObject(int x, int y, TGridObject value) {
         if (x >= 0 && y >= 0 && x < width && y < height) {
             gridArray[x, y] = value;
-            if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+            OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
         }
     }
 
     public void TriggerGridObjectChanged(int x, int y) {
-        if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+        OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
     }
 
     public void SetGridObject(Vector3 worldPosition, TGridObject value) {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(worldPosition, out int x, out int y);
         SetGridObject(x, y, value);
     }
 
@@ -106,13 +105,12 @@ public class Grid<TGridObject> {
         if (x >= 0 && y >= 0 && x < width && y < height) {
             return gridArray[x, y];
         } else {
-            return default(TGridObject);
+            return default;
         }
     }
 
     public TGridObject GetGridObject(Vector3 worldPosition) {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(worldPosition, out int x, out int y);
         return GetGridObject(x, y);
     }
 

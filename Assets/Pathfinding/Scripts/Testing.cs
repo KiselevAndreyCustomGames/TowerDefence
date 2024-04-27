@@ -20,70 +20,52 @@ public class Testing : MonoBehaviour {
     
     [SerializeField] private PathfindingDebugStepVisual pathfindingDebugStepVisual;
     [SerializeField] private PathfindingVisual pathfindingVisual;
-    [SerializeField] private CharacterPathfindingMovementHandler characterPathfinding;
-    [SerializeField, Range(1, 100)] private int wigth = 20;
-    [SerializeField, Range(1, 100)] private int heigth = 20;
+    [SerializeField, Range(1, 100)] private int width = 20;
+    [SerializeField, Range(1, 100)] private int height = 20;
     [SerializeField, Range(0, 1)] private float wallChance = 0.3f;
     
-    private Pathfinding pathfindingTree;
+    private Pathfinding pathfindingBinaryTree;
+    private Pathfinding pathfindingTernaryTree;
     private Pathfinding pathfindingList;
     private bool _showTimeBetweenFrame;
     private float _time;
 
     private void Start() {
-        pathfindingTree = new Pathfinding(wigth, heigth, new BinaryTreeDB<PathNode>());
-        pathfindingList = new Pathfinding(wigth, heigth, new PathList<PathNode>());
-        pathfindingDebugStepVisual.Setup(pathfindingTree.GetGrid());
-        pathfindingVisual.SetGrid(pathfindingTree.GetGrid());
+        pathfindingBinaryTree = new Pathfinding(width, height, new BinaryTreeDB<PathNode>());
+        pathfindingTernaryTree = new Pathfinding(width, height, new TernaryTreeDB<PathNode>());
+        pathfindingList = new Pathfinding(width, height, new PathList<PathNode>());
+        pathfindingDebugStepVisual.Setup(pathfindingBinaryTree.GetGrid());
+        pathfindingVisual.SetGrid(pathfindingBinaryTree.GetGrid());
 
-        //Debug.Log("binaryTreeLeft");
-        //var binaryTreeLeft = new BinaryTree<int>();
-        //binaryTreeLeft.AddAndReturnNode(3);
-        //binaryTreeLeft.AddAndReturnNode(5);
-        //binaryTreeLeft.AddAndReturnNode(4);
-        //binaryTreeLeft.AddAndReturnNode(6);
-        //Debug.Log(binaryTreeLeft.ToString());
-        //binaryTreeLeft.Remove(5);
-        //Debug.Log(binaryTreeLeft.ToString());
-
-        //Debug.Log("binaryTreeRigth");
-        //var binaryTreeRigth = new BinaryTree<int>();
-        //binaryTreeRigth.AddAndReturnNode(7);
-        //binaryTreeRigth.AddAndReturnNode(5);
-        //binaryTreeRigth.AddAndReturnNode(6);
-        //binaryTreeRigth.AddAndReturnNode(4);
-        //Debug.Log(binaryTreeRigth.ToString());
-        //binaryTreeRigth.Remove(5);
-        //Debug.Log(binaryTreeRigth.ToString());
-
-        //Debug.Log("binaryTreeNull");
-        //var binaryTreeNull = new BinaryTree<int>();
-        //binaryTreeNull.AddAndReturnNode(5);
-        //binaryTreeNull.AddAndReturnNode(4);
-        //binaryTreeNull.AddAndReturnNode(6);
-        //Debug.Log(binaryTreeNull.ToString());
-        //binaryTreeNull.Remove(5);
-        //Debug.Log(binaryTreeNull.ToString());
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(2)) {
             _time = Time.realtimeSinceStartup;
-            StartCoroutine(FindPath(true));
-            //characterPathfinding.SetTargetPosition(mouseWorldPosition);
+            StartCoroutine(FindPath(pathfindingBinaryTree));
         }
 
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(0))
         {
             _time = Time.realtimeSinceStartup;
-            StartCoroutine(FindPath(false));
+            StartCoroutine(FindPath(pathfindingTernaryTree));
         }
 
-        if (Input.GetMouseButtonDown(2)) {
+        if (Input.GetMouseButtonDown(1))
+        {
+            _time = Time.realtimeSinceStartup;
+            StartCoroutine(FindPath(pathfindingList));
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            PathfindingDebugStepVisual.Instance.ClearSnapshots();
             Vector3 mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
-            pathfindingTree.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
-            pathfindingTree.GetNode(x, y).SetIsWalkable(!pathfindingTree.GetNode(x, y).isWalkable);
-            pathfindingList.GetNode(x, y).SetIsWalkable(!pathfindingList.GetNode(x, y).isWalkable);
+            pathfindingBinaryTree.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
+            var nodeNewWalkable = !pathfindingBinaryTree.GetNode(x, y).isWalkable;
+            pathfindingBinaryTree.GetNode(x, y).SetIsWalkable(nodeNewWalkable);
+            pathfindingTernaryTree.GetNode(x, y).SetIsWalkable(nodeNewWalkable);
+            pathfindingList.GetNode(x, y).SetIsWalkable(nodeNewWalkable);
         }
 
         if (Input.GetKeyDown(KeyCode.X))
@@ -105,16 +87,13 @@ public class Testing : MonoBehaviour {
         }
     }
 
-    private IEnumerator FindPath(bool useTree)
+    private IEnumerator FindPath(Pathfinding pathFinding)
     {
         Vector3 mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
-        pathfindingTree.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
+        pathFinding.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
         List<PathNode> path;
 
-        if(useTree)
-            path = pathfindingTree.FindPath(0, 0, x, y);
-        else
-            path = pathfindingList.FindPath(0, 0, x, y);
+        path = pathFinding.FindPath(0, 0, x, y);
 
         if (path != null)
         {
@@ -131,17 +110,19 @@ public class Testing : MonoBehaviour {
 
     private void ConstructRandom()
     {
+        PathfindingDebugStepVisual.Instance.ClearSnapshots();
         ClearWalls();
         ConstructRandomWalls();
     }
 
     private void ClearWalls()
     {
-        for (int x = 0; x < wigth; x++)
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < heigth; y++)
+            for (int y = 0; y < height; y++)
             {
-                pathfindingTree.GetNode(x, y).SetIsWalkable(true);
+                pathfindingBinaryTree.GetNode(x, y).SetIsWalkable(true);
+                pathfindingTernaryTree.GetNode(x, y).SetIsWalkable(true);
                 pathfindingList.GetNode(x, y).SetIsWalkable(true);
             }
         }
@@ -149,13 +130,14 @@ public class Testing : MonoBehaviour {
 
     private void ConstructRandomWalls()
     {
-        for (int x = 1; x < wigth - 1; x++)
+        for (int x = 1; x < width - 1; x++)
         {
-            for (int y = 1; y < heigth - 1; y++)
+            for (int y = 1; y < height - 1; y++)
             {
                 if (Random.value <= wallChance)
                 {
-                    pathfindingTree.GetNode(x, y).SetIsWalkable(false);
+                    pathfindingBinaryTree.GetNode(x, y).SetIsWalkable(false);
+                    pathfindingTernaryTree.GetNode(x, y).SetIsWalkable(false);
                     pathfindingList.GetNode(x, y).SetIsWalkable(false);
                 }
             }

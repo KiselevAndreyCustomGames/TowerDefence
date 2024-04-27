@@ -11,7 +11,6 @@
  */
 
 using CodeMonkey;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +18,7 @@ public class Pathfinding {
 
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
+    private const int MAX_COUNT_ITERATION = 10000;
 
     public static Pathfinding Instance { get; private set; }
 
@@ -61,6 +61,8 @@ public class Pathfinding {
     }
 
     public List<PathNode> FindPath(int startX, int startY, int endX, int endY) {
+        var maxCountIteration = grid.GetWidth() * grid.GetHeight();
+        var iteration = 0;
         PathNode startNode = grid.GetGridObject(startX, startY);
         PathNode endNode = grid.GetGridObject(endX, endY);
 
@@ -68,6 +70,9 @@ public class Pathfinding {
             // Invalid Path
             return null;
         }
+
+        if (endNode.isWalkable == false)
+            endNode = FindNearestWalkableNode(endNode);
 
         openNodes.Clear();
         openNodes.Add(startNode);
@@ -87,52 +92,90 @@ public class Pathfinding {
         startNode.hCost = CalculateDistanceCost(startNode, endNode);
         startNode.CalculateFCost();
         
-        //PathfindingDebugStepVisual.Instance.ClearSnapshots();
-        //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, startNode, openNodes, closedNodes);
+        PathfindingDebugStepVisual.Instance.ClearSnapshots();
+        PathfindingDebugStepVisual.Instance.TakeSnapshot(startNode, openNodes, closedNodes, true);
 
+        PathNode prevNote = null;
         while (openNodes.IsEmpty() == false) {
-            PathNode currentNode = openNodes.GetLowest();
-            if (currentNode == endNode) {
+            PathNode lowestNode = openNodes.GetLowest();
+            if(iteration > maxCountIteration)
+            {
+                Debug.Log($"<color=red>Iteration Error</color>\n" +
+                    $"lowestNode: {lowestNode}\n" +
+                    $"prevNote: {prevNote}");
+                break;
+            }
+            if(lowestNode.Equals(prevNote))
+            {
+                Debug.Log($"<color=red>lowestNode is previous. Snapshots: {PathfindingDebugStepVisual.Instance.GetSnapshotsCount()}</color>\n" +
+                    $"lowestNode: {lowestNode}");
+                break;
+            }
+            if (lowestNode == endNode) {
                 // Reached final node
-                //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openNodes, closedNodes);
+                PathfindingDebugStepVisual.Instance.TakeSnapshot(lowestNode, openNodes, closedNodes, true);
                 var path = CalculatePath(endNode);
-                //PathfindingDebugStepVisual.Instance.TakeSnapshotFinalPath(grid, path);
-                Debug.Log($"{path.Count}");
+                PathfindingDebugStepVisual.Instance.TakeSnapshotFinalPath(grid, path);
+                Debug.Log($"path: {path.Count}\nsnapshots: {PathfindingDebugStepVisual.Instance.GetSnapshotsCount()}");
                 return path;
             }
 
-            openNodes.Remove(currentNode);
-            closedNodes.Add(currentNode);
-            Debug.Log($"- {currentNode}\n{openNodes}");
+            try
+            {
+                openNodes.Remove(lowestNode);
+            }
+            finally
+            {
+                Debug.Log($"- {lowestNode}\n{openNodes}");
+            }
+            closedNodes.Add(lowestNode);
 
-            foreach (PathNode neighbourNode in currentNode.Neibours) {
+            PathfindingDebugStepVisual.Instance.TakeSnapshot(lowestNode, openNodes, closedNodes, true);
+            foreach (PathNode neighbourNode in lowestNode.Neibours) {
                 if (closedNodes.Contains(neighbourNode)) continue;
-                if (!neighbourNode.isWalkable) {
+                if (neighbourNode.isWalkable == false) {
                     closedNodes.Add(neighbourNode);
                     continue;
                 }
 
-                int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
+                int tentativeGCost = lowestNode.gCost + CalculateDistanceCost(lowestNode, neighbourNode);
                 if (tentativeGCost < neighbourNode.gCost)
                 {
                     if (openNodes.Contains(neighbourNode))
                     {
-                        openNodes.Remove(neighbourNode);
-                        Debug.Log($"- {neighbourNode}\n{openNodes}");
+                        try
+                        {
+                            openNodes.Remove(neighbourNode);
+                        }
+                        finally
+                        {
+                            Debug.Log($"<color=red>- {neighbourNode}</color>\n{openNodes}");
+                        }
                     }
-                    neighbourNode.cameFromNode = currentNode;
+                    neighbourNode.cameFromNode = lowestNode;
                     neighbourNode.gCost = tentativeGCost;
                     neighbourNode.hCost = CalculateDistanceCost(neighbourNode, endNode);
                     neighbourNode.CalculateFCost();
                     openNodes.Add(neighbourNode);
                     Debug.Log($"+ {neighbourNode}\n{openNodes}");
                 }
-                //PathfindingDebugStepVisual.Instance.TakeSnapshot(grid, currentNode, openNodes, closedNodes);
+                PathfindingDebugStepVisual.Instance.TakeSnapshot(neighbourNode, openNodes, closedNodes);
             }
+
+            iteration++;
+            prevNote = lowestNode;
         }
 
         // Out of nodes on the openList
         return null;
+    }
+
+    private PathNode FindNearestWalkableNode(PathNode node)
+    {
+        PathNode resultNode = null;
+        // calculate neighbours cost to start node
+
+        return node;
     }
 
     private List<PathNode> GetNeighbourList(PathNode currentNode) {
