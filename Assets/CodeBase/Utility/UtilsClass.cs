@@ -12,9 +12,7 @@ namespace CodeBase.Utility
 
             Transform transform = gameObject.transform;
             transform.SetParent(parent, false);
-            transform.localPosition = localPosition;
-            transform.localRotation = Quaternion.Euler(localRotation);
-
+            transform.SetLocalPositionAndRotation(localPosition, Quaternion.Euler(localRotation));
             TextMesh textMesh = gameObject.GetComponent<TextMesh>();
             //TextMesh textMesh = gameObject.AddComponent<TextMesh>();
             textMesh.anchor = textAnchor;

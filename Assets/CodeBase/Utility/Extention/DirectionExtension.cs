@@ -43,5 +43,5 @@ namespace CodeBase.Utility.Extension
 
         public static float GetAngle(this Direction direction) =>
             (float)direction * 90f;
-     }
+    }
 }
