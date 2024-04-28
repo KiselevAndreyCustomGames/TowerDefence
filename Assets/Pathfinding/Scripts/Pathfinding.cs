@@ -18,7 +18,6 @@ public class Pathfinding {
 
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
-    private const int MAX_COUNT_ITERATION = 10000;
 
     public static Pathfinding Instance { get; private set; }
 
@@ -54,14 +53,14 @@ public class Pathfinding {
         } else {
             List<Vector3> vectorPath = new List<Vector3>();
             foreach (PathNode pathNode in path) {
-                vectorPath.Add(new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f);
+                vectorPath.Add(new Vector3(pathNode.x, pathNode.y) * grid.CellSize + Vector3.one * grid.CellSize * .5f);
             }
             return vectorPath;
         }
     }
 
     public List<PathNode> FindPath(int startX, int startY, int endX, int endY) {
-        var maxCountIteration = grid.GetWidth() * grid.GetHeight();
+        var maxCountIteration = grid.Width * grid.Height;
         var iteration = 0;
         PathNode startNode = grid.GetGridObject(startX, startY);
         PathNode endNode = grid.GetGridObject(endX, endY);
@@ -79,8 +78,8 @@ public class Pathfinding {
         closedNodes = new List<PathNode>();
         Debug.Log($"+ {startNode}\n{openNodes}");
 
-        for (int x = 0; x < grid.GetWidth(); x++) {
-            for (int y = 0; y < grid.GetHeight(); y++) {
+        for (int x = 0; x < grid.Width; x++) {
+            for (int y = 0; y < grid.Height; y++) {
                 PathNode pathNode = grid.GetGridObject(x, y);
                 pathNode.gCost = 99999999;
                 pathNode.CalculateFCost();
@@ -187,20 +186,20 @@ public class Pathfinding {
             // Left Down
             if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));
             // Left Up
-            if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
+            if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
         }
-        if (currentNode.x + 1 < grid.GetWidth()) {
+        if (currentNode.x + 1 < grid.Width) {
             // Right
             neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y));
             // Right Down
             if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));
             // Right Up
-            if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
+            if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
         }
         // Down
         if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x, currentNode.y - 1));
         // Up
-        if (currentNode.y + 1 < grid.GetHeight()) neighbourList.Add(GetNode(currentNode.x, currentNode.y + 1));
+        if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x, currentNode.y + 1));
 
         return neighbourList;
     }
@@ -229,26 +228,4 @@ public class Pathfinding {
         int remaining = Mathf.Abs(xDistance - yDistance);
         return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
     }
-
-    //private PathNode GetLowestFCostNode(IPathFindData<PathNode> pathNodeList) {
-    //    var lowestFCostTreeNode = pathNodeList.RootNode;
-
-    //    while (lowestFCostTreeNode.LeftNode != null)
-    //    {
-    //        lowestFCostTreeNode = lowestFCostTreeNode.LeftNode;
-    //    }
-    //    //for (int i = 1; i < pathNodeList.Count; i++)
-    //    //{
-    //    //    bool isNewLowestFCostNode = useSimpleSearchClosestNode ?
-    //    //        pathNodeList[i].fCost < lowestFCostNode.fCost :
-    //    //        pathNodeList[i] < lowestFCostNode;
-    //    //        //pathNodeList[i].fCost < lowestFCostNode.fCost || (pathNodeList[i].fCost == lowestFCostNode.fCost && pathNodeList[i].hCost < lowestFCostNode.hCost);
-    //    //    if (isNewLowestFCostNode)
-    //    //    {
-    //    //        lowestFCostNode = pathNodeList[i];
-    //    //    }
-    //    //}
-    //    return lowestFCostTreeNode.Data;
-    //}
-
 }

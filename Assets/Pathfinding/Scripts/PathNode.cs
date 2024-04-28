@@ -17,7 +17,7 @@ namespace CodeMonkey
 {
     public class PathNode : IComparable<PathNode>
     {
-        private readonly Grid<PathNode> grid;
+        private readonly IGrid<PathNode> grid;
 
         public int x;
         public int y;
@@ -30,7 +30,7 @@ namespace CodeMonkey
         public PathNode cameFromNode;
         public List<PathNode> Neibours;
 
-        public PathNode(Grid<PathNode> grid, int x, int y)
+        public PathNode(IGrid<PathNode> grid, int x, int y)
         {
             this.grid = grid;
             this.x = x;
@@ -66,7 +66,7 @@ namespace CodeMonkey
         public override bool Equals(object obj)
         {
             return obj is PathNode node &&
-                   EqualityComparer<Grid<PathNode>>.Default.Equals(grid, node.grid) &&
+                   EqualityComparer<IGrid<PathNode>>.Default.Equals(grid, node.grid) &&
                    x == node.x &&
                    y == node.y &&
                    gCost == node.gCost &&

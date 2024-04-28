@@ -1,7 +1,6 @@
 using CodeMonkey;
 using CodeMonkey.Utils;
 using Lean.Pool;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,33 +16,33 @@ public class TestPathfindGridVisual : MonoBehaviour
     private readonly List<PathfindingDebugStepVisualNode> visualNodeList = new();
     private PathfindingDebugStepVisualNode[,] visualNodeArray;
 
-    public void Setup(Grid<PathNode> grid)
+    public void Setup(IGrid<PathNode> grid)
     {
-        visualNodeArray = new PathfindingDebugStepVisualNode[grid.GetWidth(), grid.GetHeight()];
+        visualNodeArray = new PathfindingDebugStepVisualNode[grid.Width, grid.Height];
         visualNodeList.Clear();
         LeanPool.DespawnAll();
 
-        for (int x = 0; x < grid.GetWidth(); x++)
+        for (int x = 0; x < grid.Width; x++)
         {
-            for (int y = 0; y < grid.GetHeight(); y++)
+            for (int y = 0; y < grid.Height; y++)
             {
-                Vector3 gridPosition = grid.GetCellSize() * (new Vector3(x, y) + Vector3.one * 0.5f);
+                Vector3 gridPosition = grid.CellSize * (new Vector3(x, y) + Vector3.one * 0.5f);
                 var visualNode = LeanPool.Spawn(pfPathfindingDebugStepVisualNode, gridPosition, Quaternion.identity, transform);
                 visualNodeArray[x, y] = visualNode;
                 visualNodeList.Add(visualNode);
             }
         }
 
-        for (int x = 0; x < grid.GetWidth(); x++)
+        for (int x = 0; x < grid.Width; x++)
         {
-            var numPosition = grid.GetCellSize() * (new Vector3(x, -1f) + Vector3.one * 0.5f);
+            var numPosition = grid.CellSize * (new Vector3(x, -1f) + Vector3.one * 0.5f);
             var number = LeanPool.Spawn(_numberTextPrefab, numPosition, Quaternion.identity, transform);
             number.text = x.ToString();
         }
 
-        for(int y = 0; y < grid.GetHeight(); y++)
+        for(int y = 0; y < grid.Height; y++)
         {
-            var numPosition = grid.GetCellSize() * (new Vector3(-1f, y) + Vector3.one * 0.5f);
+            var numPosition = grid.CellSize * (new Vector3(-1f, y) + Vector3.one * 0.5f);
             var number = LeanPool.Spawn(_numberTextPrefab, numPosition, Quaternion.identity, transform);
             number.text = y.ToString();
         }
@@ -51,14 +50,14 @@ public class TestPathfindGridVisual : MonoBehaviour
         HideNodeVisuals();
     }
 
-    public void UpdateNodes(Grid<PathNode> grid, PathNode destinationNode)
+    public void UpdateNodes(IGrid<PathNode> grid, PathNode destinationNode)
     {
         HideNodeVisuals();
         visualNodeArray[destinationNode.x, destinationNode.y].ChangeBgColor(_destinationColor);
 
-        for (int x = 0; x < grid.GetWidth(); x++)
+        for (int x = 0; x < grid.Width; x++)
         {
-            for (int y = 0; y < grid.GetHeight(); y++)
+            for (int y = 0; y < grid.Height; y++)
             {
                 var nodeVisual = visualNodeArray[x, y];
                 var node = grid.GetGridObject(x, y);

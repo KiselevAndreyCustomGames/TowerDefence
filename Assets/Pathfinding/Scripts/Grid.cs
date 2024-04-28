@@ -16,19 +16,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeMonkey.Utils;
 
-public class Grid<TGridObject> {
-
+public class Grid<TGridObject> : IGrid<TGridObject>
+{
     public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
-    public class OnGridObjectChangedEventArgs : EventArgs {
-        public int x;
-        public int y;
-    }
 
     private int width;
     private int height;
     private float cellSize;
     private Vector3 originPosition;
     private TGridObject[,] gridArray;
+
+    public int Width => width;
+    public int Height => height;
+    public float CellSize => cellSize;
 
     public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject) {
         this.width = width;
@@ -64,25 +64,15 @@ public class Grid<TGridObject> {
         }
     }
 
-    public int GetWidth() {
-        return width;
-    }
-
-    public int GetHeight() {
-        return height;
-    }
-
-    public float GetCellSize() {
-        return cellSize;
-    }
-
     public Vector3 GetWorldPosition(int x, int y) {
-        return new Vector3(x, y) * cellSize + originPosition;
+        return new Vector3(x, y) * cellSize + originPosition + cellSize * 0.5f * new Vector3(1, 1);
     }
 
     public void GetXY(Vector3 worldPosition, out int x, out int y) {
         x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+        x = Mathf.Clamp(x, 0, width - 1);
+        y = Mathf.Clamp(y, 0, height - 1);
     }
 
     public void SetGridObject(int x, int y, TGridObject value) {

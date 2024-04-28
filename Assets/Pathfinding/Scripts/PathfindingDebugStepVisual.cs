@@ -30,24 +30,32 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
     [SerializeField] private Color _inOpenListColor = UtilsClass.GetColorFromString("009AFF");
     [SerializeField] private Color _inCloseListColor = new(1, 0, 0);
 
-    private List<PathfindingDebugStepVisualNode> visualNodeList = new();
-    private List<GridSnapshotAction> gridSnapshotActionList;
+    private bool _needShowNode = false;
     private bool autoShowSnapshots;
     private float autoShowSnapshotsTimer;
     private PathfindingDebugStepVisualNode[,] visualNodeArray;
-    private List<PathNode> _activedNodes = new();
+
+    private readonly List<PathfindingDebugStepVisualNode> visualNodeList = new();
+    private readonly List<PathfindingDebugStepVisualNode> _neighbours = new();
+    private readonly List<GridSnapshotAction> gridSnapshotActionList = new();
+    private readonly List<PathNode> _activedNodes = new();
+
+    private PathNode _prevCurrentNode;
+    private PathNode _prevNode;
+    private IGrid<PathNode> _grid;
+    private PathfindingDebugStepVisualNode _prevSelectedVisualNode;
 
     private void Awake() {
         Instance = this;
-        gridSnapshotActionList = new List<GridSnapshotAction>();
     }
 
-    public void Setup(Grid<PathNode> grid) {
-        visualNodeArray = new PathfindingDebugStepVisualNode[grid.GetWidth(), grid.GetHeight()];
+    public void Setup(IGrid<PathNode> grid) {
+        _grid = grid;
+        visualNodeArray = new PathfindingDebugStepVisualNode[grid.Width, grid.Height];
 
-        for (int x = 0; x < grid.GetWidth(); x++) {
-            for (int y = 0; y < grid.GetHeight(); y++) {
-                Vector3 gridPosition = new Vector3(x, y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f;
+        for (int x = 0; x < grid.Width; x++) {
+            for (int y = 0; y < grid.Height; y++) {
+                Vector3 gridPosition = grid.GetWorldPosition(x, y);
                 var visualNode = CreateVisualNode(gridPosition);
                 visualNodeArray[x, y] = visualNode;
                 visualNodeList.Add(visualNode);
@@ -58,28 +66,81 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKey(KeyCode.Space)) {
+        if (Input.GetKey(KeyCode.Space))
             ShowNextSnapshot();
-        }
 
         if (Input.GetKeyDown(KeyCode.N))
-        {
             ShowNextSnapshot();
-        }
 
-        if (Input.GetKeyDown(KeyCode.Return)) {
+        if (Input.GetKeyDown(KeyCode.Return))
             autoShowSnapshots = true;
-        }
 
-        if (autoShowSnapshots) {
-            autoShowSnapshotsTimer -= Time.deltaTime;
-            if (autoShowSnapshotsTimer <= 0f) {
-                autoShowSnapshotsTimer += autoShowSnapshotsTimerMax;
-                ShowNextSnapshot();
-                if (gridSnapshotActionList.Count == 0) {
-                    autoShowSnapshots = false;
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            _needShowNode = !_needShowNode;
+            if(_needShowNode == false)
+            {
+                if (_prevSelectedVisualNode != null)
+                {
+                    _prevSelectedVisualNode.ChangeBgColor(_baseColor);
+
+                    foreach (var node in _neighbours)
+                        node.ChangeBgColor(_baseColor);
                 }
             }
+        }
+
+        if (autoShowSnapshots)
+        {
+            autoShowSnapshotsTimer -= Time.deltaTime;
+            if (autoShowSnapshotsTimer <= 0f)
+            {
+                autoShowSnapshotsTimer += autoShowSnapshotsTimerMax;
+                ShowNextSnapshot();
+                if (gridSnapshotActionList.Count == 0) 
+                    autoShowSnapshots = false;
+            }
+        }
+
+        if(gridSnapshotActionList.Count == 0 && _needShowNode)
+        {
+            var mouseWorldPos = UtilsClass.GetMouseWorldPosition();
+            _grid.GetXY(mouseWorldPos, out int x, out int y);
+            var currentVisualNode = visualNodeArray[x, y];
+            if (_prevSelectedVisualNode != currentVisualNode)
+            {
+                if (_prevSelectedVisualNode != null)
+                {
+                    _prevSelectedVisualNode.ChangeBgColor(_baseColor);
+
+                    foreach (var node in _neighbours)
+                        node.ChangeBgColor(_baseColor);
+                }
+
+                currentVisualNode.ChangeBgColor(_currentNodeColor);
+                _prevSelectedVisualNode = currentVisualNode;
+
+                _neighbours.Clear();
+                var neighbours = _grid.GetGridObject(x, y).Neibours;
+                foreach (var neighbour in neighbours)
+                {
+                    var node = visualNodeArray[neighbour.x, neighbour.y];
+                    node.ChangeBgColor(_processedNodeColor);
+                    _neighbours.Add(node);
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            var mouseWorldPos = UtilsClass.GetMouseWorldPosition();
+            _grid.GetXY(mouseWorldPos, out int x, out int y);
+            var str = $"<color=red>{mouseWorldPos}</color>";
+            str += $"\ncurrent - x: {x}, y: {y}";
+            var neighbours = _grid.GetGridObject(x, y).Neibours;
+            foreach (var neighbour in neighbours)
+                str += $"\n{neighbour}";
+            Debug.Log(str);
         }
     }
 
@@ -96,9 +157,6 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
         _activedNodes.Clear();
         HideNodeVisuals();
     }
-
-    private PathNode _prevCurrentNode;
-    private PathNode _prevNode;
 
     public void TakeSnapshot(PathNode current, IPathFindData<PathNode> nodeList, List<PathNode> closedList, bool isCurrentNode = false)
     {
@@ -128,6 +186,16 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
             _activedNodes.Add(current);
 
         gridSnapshotActionList.Add(gridSnapshotAction);
+    }
+
+    public void LockNode(int x, int y)
+    {
+        visualNodeArray[x, y].Lock(Color.black);
+    }
+
+    public void UnlockNode(int x, int y)
+    {
+        visualNodeArray[x, y].Unlock(_baseColor);
     }
 
     private void TakeSnapshot(ref PathNode prev, IPathFindData<PathNode> nodeList, List<PathNode> closedList, GridSnapshotAction gridSnapshotAction)
@@ -167,7 +235,6 @@ public class PathfindingDebugStepVisual : MonoBehaviour {
             int gCost = pathNode.gCost;
             int hCost = pathNode.hCost;
             int fCost = pathNode.fCost;
-            Vector3 gridPosition = new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f;
             bool isInPath = path.Contains(pathNode);
             int tmpX = pathNode.x;
             int tmpY = pathNode.y;

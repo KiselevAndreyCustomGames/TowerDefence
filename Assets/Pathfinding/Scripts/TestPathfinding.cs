@@ -39,9 +39,9 @@ public class TestPathfinding
 
         Vector3 mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
         var destinationNode = Grid.GetGridObject(mouseWorldPosition);
-        for(int x = 0; x < Grid.GetWidth(); x++)
+        for(int x = 0; x < Grid.Width; x++)
         {
-            for(int y = 0; y < Grid.GetHeight(); y++)
+            for(int y = 0; y < Grid.Height; y++)
             {
                 var node = GetNode(x, y);
                 node.fCost = CalculateDistanceCost(node, destinationNode);

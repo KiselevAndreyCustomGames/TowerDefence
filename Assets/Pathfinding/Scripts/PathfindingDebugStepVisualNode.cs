@@ -10,17 +10,21 @@ public class PathfindingDebugStepVisualNode : MonoBehaviour
     [SerializeField] private TextMeshPro _gCostText;
     [SerializeField, Min(0)] private int _maxShowingCost = 1000;
 
+    private bool _canChange = true;
+
     public void ChangeBgColor(Color color)
     {
-        _sprite.color = color;
+        if(_canChange)
+            _sprite.color = color;
     }
 
     public void SetCostsTexts(int fCost, int hCost, int gCost)
     {
+        if (_canChange == false)
+            return;
+
         if(fCost > _maxShowingCost)
-        {
             _costTextsObject.SetActive(false);
-        }
         else
         {
             _costTextsObject.SetActive(true);
@@ -28,5 +32,19 @@ public class PathfindingDebugStepVisualNode : MonoBehaviour
             _hCostText.text = hCost.ToString();
             _gCostText.text = gCost.ToString();
         }
+    }
+
+    public void Lock(Color color)
+    {
+        _canChange = true;
+        SetCostsTexts(_maxShowingCost + 1, 0, 0);
+        ChangeBgColor(color);
+        _canChange = false;
+    }
+
+    public void Unlock(Color color)
+    {
+        _canChange = true;
+        ChangeBgColor(color);
     }
 }
